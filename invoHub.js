@@ -1255,9 +1255,9 @@ function renderFooter() {
     footerEl.innerHTML = `
         <div>© ${year} GIT System Software. All rights reserved.</div>
         <div style="margin-top: 6px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://gitsystemsoftware.com/terms" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Terms of Service</a>
-            <a href="https://gitsystemsoftware.com/privacy" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Privacy Policy</a>
-            <a href="https://gitsystemsoftware.com/support" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Support</a>
+            <a href="https://gitsystem.com/terms" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Terms of Service</a>
+            <a href="https://gitsystem.com/privacy" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Privacy Policy</a>
+            <a href="https://gitsystem.com/support" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Support</a>
         </div>
     `;
 }
