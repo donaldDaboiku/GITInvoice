@@ -135,7 +135,37 @@ body {
     margin-bottom: 16px;
     min-height: 20px;
 }
+.demo-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 48px;
+    font-weight: bold;
+    color: rgba(255, 107, 53, 0.1);
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1;
+}
 
+.btn-demo {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 16px;
+}
+
+.btn-demo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
 .btn-activate {
     width: 100%;
     padding: 16px;

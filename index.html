@@ -19,41 +19,48 @@
 <body>
 
     <!-- ==================== LICENSE GATE ==================== -->
-    <div id="license-gate" class="visible">
-        <div class="license-gate-card">
-            <div class="license-gate-logo"></div>
-            <div class="license-gate-title">invo<span>Hub</span></div>
-            <div class="license-gate-sub">Enter your license key to activate the app.</div>
+     <!-- In index.html, update the license gate -->
+<div id="license-gate" class="visible">
+    <div class="license-gate-card">
+        <div class="license-gate-logo"></div>
+        <div class="license-gate-title">invo<span>Hub</span></div>
+        <div class="license-gate-sub">Enter your license key to activate the app.</div>
 
-            <input
-                type="text"
-                id="license-key-input"
-                class="license-input"
-                placeholder="XXXX-XXXX-XXXX-XXXX"
-                autocomplete="off"
-                spellcheck="false"
-                maxlength="64"
-            >
-            <div class="license-error-msg" id="license-error"></div>
+        <input
+            type="text"
+            id="license-key-input"
+            class="license-input"
+            placeholder="XXXX-XXXX-XXXX-XXXX"
+            autocomplete="off"
+            spellcheck="false"
+            maxlength="64"
+        >
+        <div class="license-error-msg" id="license-error"></div>
 
-            <button class="btn-activate" id="activate-btn" onclick="activateLicense()">
-                <span id="activate-btn-text">✓ Activate License</span>
-            </button>
+        <button class="btn-activate" id="activate-btn" onclick="activateLicense()">
+            <span id="activate-btn-text">✓ Activate License</span>
+        </button>
 
-            <hr class="license-divider">
+        <hr class="license-divider">
 
-            <div style="margin-bottom: 12px; color: var(--text-muted); font-size: 14px;">Don't have a license yet?</div>
-            <a href="https://gitsystem.gumroad.com/l/mcfjio" target="_blank" class="license-buy-link">
-                🛒 Buy InvoHub — One-time purchase →
-            </a>
+        <!-- NEW: Try Demo Button -->
+        <button class="btn-demo" onclick="startDemoMode()">
+            🎯 Try Demo (3 invoices free)
+        </button>
 
-            <div class="license-privacy-note">
-                <span>🔒</span>
-                <span>Your business data is <strong>stored only on this device</strong> and never uploaded to any server. License validation is the only external request we make.</span>
-            </div>
+        <div style="margin-top: 16px; margin-bottom: 12px; color: var(--text-muted); font-size: 14px;">
+            Don't have a license yet?
+        </div>
+        <a href="https://gitsystem.gumroad.com/l/mefijo" target="_blank" class="license-buy-link">
+            🛒 Buy InvoHub — One-time purchase ($25.42) →
+        </a>
+
+        <div class="license-privacy-note">
+            <span>🔒</span>
+            <span>Your business data is <strong>stored only on this device</strong> and never uploaded to any server.</span>
         </div>
     </div>
-
+</div>
     <!-- ==================== PRIVACY NOTICE (first run) ==================== -->
     <div id="privacy-notice">
         <div class="privacy-notice-text">

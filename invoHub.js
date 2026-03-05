@@ -20,9 +20,34 @@ const STORAGE_KEYS = {
     LICENSE_EMAIL: 'invoHub_license_email',
     // LICENSE_DEVICES: 'invoHub_license_devices',
     LICENSE_ACTIVATED: 'invoHub_license_activated',
+    DEMO_MODE: 'invoHub_demo_mode',
     PRIVACY_ACK: 'invoHub_privacy_ack',
     INVOICE_COUNTER: 'invoHub_invoice_counter' // persistent sequential counter
 };
+// Helper function to check if in demo mode
+const DEMO_LIMITS = {
+    MAX_INVOICES: 3,
+    MAX_CUSTOMERS: 2,
+    WATERMARKE: true
+}
+function isDemoMode() {
+    const isActivated = localStorage.getItem(STORAGE_KEYS.LICENSE_ACTIVATED);
+    return isActivated !== 'true';
+}
+
+// Helper function to get remaining demo invoices
+function getDemoInvoicesRemaining() {
+    if (!isDemoMode()) return Infinity;
+    const invoices = getInvoices();
+    return Math.max(0, DEMO_LIMITS.MAX_INVOICES - invoices.length);
+}
+
+// Helper function to get remaining demo customers
+function getDemoCustomersRemaining() {
+    if (!isDemoMode()) return Infinity;
+    const customers = getCustomers();
+    return Math.max(0, DEMO_LIMITS.MAX_CUSTOMERS - customers.length);
+}
 
 // ==================== GLOBAL STATE ====================
 let currentInvoice = null;
@@ -59,6 +84,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+//===================DEMO ==============================
+    function startDemoMode() {
+        localStorage.setItem(STORAGE_KEYS.DEMO_MODE, 'true');
+        document.getElementById('license-gate').classList.remove('visible');
+        bootApp();
+
+
+        setTimeout(() => {
+            alert(
+                'Welcome to InvoHub Demo!\n\n' +
+                'You can create up to 3 invoices and 2 customers for free.\n\n' +
+                'Purchase a license anytime to unlock unlimited invoices, ' +
+                'remove watermarks, and keep all your data.\n\n' +
+                'Happy invoicing!'
+            );
+        }, 500);
+    }
 // ==================== LICENSE GATE ====================
 
 function showLicenseGate(prefillKey = '') {
@@ -77,63 +119,6 @@ function showLicenseGate(prefillKey = '') {
         document.getElementById('license-error').textContent = '';
     });
 }
-
-// async function activateLicense() {
-//     const input = document.getElementById('license-key-input');
-//     const btn = document.getElementById('activate-btn');
-//     const btnText = document.getElementById('activate-btn-text');
-//     const errorEl = document.getElementById('license-error');
-
-//     const key = input.value.trim().toUpperCase();
-
-//     if (!key || key.length < 8) {
-//         input.classList.add('error');
-//         errorEl.textContent = 'Please enter a valid license key from your Gumroad receipt email.';
-//         return;
-//     }
-
-//     btn.disabled = true;
-//     btnText.innerHTML = '<span class="license-loader"></span> Validating...';
-//     errorEl.textContent = '';
-
-//     try {
-//         const response = await fetch(LICENSE_VALIDATE_URL, {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ license_key: key, action: 'activate' })
-//         });
-
-//         const data = await response.json();
-
-//         if (data.success) {
-//             localStorage.setItem(STORAGE_KEYS.LICENSE_KEY, key);
-//             localStorage.setItem(STORAGE_KEYS.LICENSE_EMAIL, data.email || 'Verified');
-//             localStorage.setItem(STORAGE_KEYS.DEVICE_ACTIVATED, 'true');
-//             if (data.devices_used && data.devices_max) {
-//                 localStorage.setItem(STORAGE_KEYS.LICENSE_DEVICES, `${data.devices_used}/${data.devices_max}`);
-//             }
-
-//             input.classList.add('success');
-//             btnText.innerHTML = '✓ Activated! Loading app...';
-
-//             setTimeout(() => {
-//                 document.getElementById('license-gate').classList.remove('visible');
-//                 bootApp();
-//             }, 800);
-//         } else {
-//             input.classList.add('error');
-//             errorEl.textContent = data.error || 'Invalid license key. Please check your Gumroad receipt email.';
-//             btn.disabled = false;
-//             btnText.textContent = '✓ Activate License';
-//         }
-//     } catch (err) {
-//         console.error('License validation error:', err);
-//         input.classList.add('error');
-//         errorEl.textContent = 'Could not reach activation server. Please check your internet connection and try again.';
-//         btn.disabled = false;
-//         btnText.textContent = '✓ Activate License';
-//     }
-// }
 
 async function activateLicense() {
     const input = document.getElementById('license-key-input');
@@ -320,6 +305,9 @@ function bootApp(action) {
     if (!localStorage.getItem(STORAGE_KEYS.PRIVACY_ACK)) {
         document.getElementById('privacy-notice').classList.add('visible');
     }
+    if (isDemoMode()) {
+        showDemoBanner();
+    }
 
     // Set up license info in sidebar and settings
     const email = localStorage.getItem(STORAGE_KEYS.LICENSE_EMAIL) || 'Verified';
@@ -343,7 +331,42 @@ function bootApp(action) {
         navigateToPage('reports');
     }
 }
-
+// Demo banner function
+function showDemoBanner() {
+    const invoicesRemaining = getDemoInvoicesRemaining();
+    const customersRemaining = getDemoCustomersRemaining();
+    
+    const banner = document.createElement('div');
+    banner.id = 'demo-banner';
+    banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 20px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 9999;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    
+    banner.innerHTML = `
+        🎯 Demo Mode: ${invoicesRemaining} invoice${invoicesRemaining !== 1 ? 's' : ''} remaining • 
+        ${customersRemaining} customer${customersRemaining !== 1 ? 's' : ''} remaining • 
+        <a href="https://gitsystem.gumroad.com/l/mefijo" target="_blank" 
+           style="color: white; text-decoration: underline; margin-left: 8px;">
+           Upgrade to Pro ($25.42)
+        </a>
+    `;
+    
+    document.body.prepend(banner);
+    
+    // Adjust main app top padding to account for banner
+    document.getElementById('main-app').style.paddingTop = '48px';
+}
 // ==================== PRIVACY =====================
 
 function acknowledgePrivacy() {
@@ -782,6 +805,30 @@ function closeInvoiceModal() {
 // ==================== SAVE INVOICE ====================
 
 function saveInvoice() {
+
+    const form = document.getElementById('invoice-form');
+    if (!form.checkValidity()){
+        form.reportValidity();
+        return;
+    }
+
+    // Check demo limits
+
+    if (isDemoMode() && !currentInvoice) {
+        const remaining = getDemoInvoicesRemaining();
+        if (remaining <= 0) {
+            const upgrade = confirm(
+                'Demo Limit Reached\n\n' +
+                'You\'ve created 3 invoices (demo limit). \n\n' +
+                'Purchase a license to create unlimited invoices and unlock all features. \n\n' +
+                'Buy now?'
+            );
+            if  (upgrade) {
+                window.open('https://gitsystem.gumroad.com/l/mefijo', '_blank');
+            }
+            return;
+        }
+    }
     const number = document.getElementById('invoice-number').value.trim();
     const status = document.getElementById('invoice-status').value;
     const date = document.getElementById('invoice-date').value;
@@ -847,6 +894,7 @@ function saveInvoice() {
         showToast('Invoice saved successfully!');
     }
 }
+
 
 // ==================== AUTO-SYNC CUSTOMER FROM INVOICE ====================
 // When an invoice is saved, automatically create or update the customer record.
@@ -976,6 +1024,9 @@ function generateInvoicePreview(invoice) {
 
     const html = `
         <div class="invoice-preview-header">
+        <div class="invoice-document">
+            ${isDemoMode() ? '<div class="demo-watermart">DEMO VERSION- Purchase license to remove watermark</div>' : ''}
+        
             <div class="company-info">
                 ${logo ? `<img src="${logo}" alt="Logo" class="company-logo">` : ''}
                 <h2>${escapeHtml(settings.companyName || 'Your Company Name')}</h2>
@@ -1062,6 +1113,7 @@ function generateInvoicePreview(invoice) {
                     ${settings.iban ? `<p><strong>IBAN:</strong> ${escapeHtml(settings.iban)}</p>` : ''}
                 </div>
             </div>` : ''}
+            </div>
     `;
 
     document.getElementById('invoice-preview-container').innerHTML = html;
@@ -1385,6 +1437,27 @@ function closeCustomerModal() {
 }
 
 function saveCustomer() {
+
+    const form = document.getElementById('customer-form');
+    if(!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    if (isDemoMode() && !currentCustomer) {
+        const remaining = getDemoCustomersRemaining();
+        if (remaining <= 0) {
+            const upgrade = confirm(
+                'Demo Limit Reached\n\n' +
+                'You\'ve added 2 customers (demo limit).\n\n' +
+                'Purchase a license to add unlimited customers.\n\n' +
+                'Buy now?'
+            );
+            if (upgrade) {
+                window.open('https://gitsystem.gumroad.com/l/mefijo', '_blank');
+            }
+            return;
+        }
+    }
     const name = document.getElementById('customer-form-name').value.trim();
     if (!name) { alert('Customer name is required.'); return; }
 
