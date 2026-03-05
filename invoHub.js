@@ -3,11 +3,11 @@
 
 // ==================== CONFIGURATION ====================
 // Replace this URL with your actual Netlify/Vercel function URL after deployment
-const GUMROAD_PRODUCT_PERMALINK = 'YOUR_PRODUCT_PERMALINK_HERE'; // Get from Gumroad Dashboard
+const GUMROAD_PRODUCT_PERMALINK = 'QDQR3nOYx2wXbctQEB75lg=='; // Get from Gumroad Dashboard
 
 // Gumroad product page URL — replace with your actual product URL
 const GUMROAD_URL = 'https://gitsystem.gumroad.com/l/mcfjio'; // Your real Gumroad URL
-// For Vercel use: '/api/validate-license'
+
 
 
 // ==================== STORAGE KEYS ====================
