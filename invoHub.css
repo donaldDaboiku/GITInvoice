@@ -518,7 +518,7 @@ body {
 }
 
 .stat-value {
-    font-size: clamp(18px, 2.5vw, 28px);
+    font-size: clamp(18px, 2.5vw, 20px);
     font-weight: 700;
     margin-bottom: 8px;
     overflow-wrap: break-word;
