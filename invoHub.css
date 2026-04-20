@@ -1574,7 +1574,7 @@ body {
 }
 
 /* owner-only: hidden for cashiers (applied by JS) */
-.owner-only { }
+.owner-only {margin: 0; }
 
 /* ==================== INVOHUB v4.1 — USER AUTH STYLES ==================== */
 
