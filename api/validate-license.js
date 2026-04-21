@@ -7,7 +7,7 @@
 //
 // Supabase table: run setup-db.sql to create the activations table
 
-export const config = { runtime: 'nodejs20.x' };
+export const config = { runtime: 'nodejs' };
 
 // ── Gumroad product permalinks → tier config ──────────────────────────────
 const TIER_MAP = {
