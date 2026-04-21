@@ -1060,12 +1060,49 @@ body {
 
 /* Print styles */
 @media print {
-    .sidebar, #app-footer, .modal-header, .modal-footer, #privacy-notice, #license-gate {
+    .sidebar, #app-footer, .modal-header, .modal-footer, 
+    #privacy-notice, #license-gate {
         display: none !important;
     }
-    .modal-content { max-width: 100%; border: none; }
-    .modal-body { padding: 0; }
-    .invoice-preview { padding: 0; }
+    .main-content > .header,
+    #trial-banner,
+    .search-bar,
+    .stats-grid,
+    .invoice-section,
+    .invoice-list-wrap,
+    .invoice-cards,
+    .invoice-table,
+    .page,
+    #dashboard-page,
+    #invoices-page,
+    #customers-page,
+    #reports-page,
+    #settings-page {
+        display: none !important;
+    }
+
+    /* Show ONLY the modal and its preview */
+    #view-invoice-modal {
+        display: block !important;
+        position: static !important;
+        background: none !important;
+        padding: 0 !important;
+    }
+
+    .modal-content {
+        max-width: 100% !important;
+        max-height: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .modal-body { padding: 0 !important; }
+
+    .invoice-preview {
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
 }
 
 /* Responsive */
