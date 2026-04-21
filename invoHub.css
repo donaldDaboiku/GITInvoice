@@ -1091,7 +1091,7 @@ body {
     .paywall-card { padding: 28px 20px; }
 
     /* Swap table → cards on mobile */
-    .invoice-table { display: none; }
+    .invoice-table { display: none  !important}
     .invoice-cards { display: flex; flex-direction: column; gap: 10px; padding: 12px 0; }
 
     .invoice-card-mobile {
