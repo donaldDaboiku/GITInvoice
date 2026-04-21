@@ -2306,3 +2306,115 @@ body {
 #trial-banner strong {
     color: var(--primary);
 }
+
+/* ==================== NEW FEATURE STYLES ==================== */
+
+/* Low stock alert banner */
+.low-stock-banner {
+    background: var(--warning-bg, rgba(255,170,0,0.12));
+    border: 1px solid var(--warning, #ffaa00);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Badge styles */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+.badge-success { background: rgba(0,186,136,0.15); color: var(--success, #00ba88); }
+.badge-danger  { background: rgba(255,72,72,0.15);  color: var(--danger,  #ff4848); }
+.badge-warning { background: rgba(255,170,0,0.15);  color: var(--warning, #ffaa00); }
+
+/* Small buttons */
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-success { background: var(--success, #00ba88); color: #fff; border: none; }
+
+/* Product picker button in item rows */
+.product-pick-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0.6;
+    padding: 2px;
+    line-height: 1;
+}
+.product-pick-btn:hover { opacity: 1; }
+
+/* Product picker dropdown */
+.product-picker-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--bg-card, #1a2332);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 2px;
+}
+.product-picker-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-color);
+}
+.product-picker-item:last-child { border-bottom: none; }
+.product-picker-item:hover { background: var(--bg-secondary); }
+.product-picker-item span { color: var(--text-muted); font-size: 12px; }
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+.empty-sub { font-size: 14px; margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+/* Team feature nav section — hide on solo */
+.team-feature { display: none; }
+
+
+
+/* Stat card colour states for dashboard extras */
+.stat-card-danger  { border-left: 3px solid var(--danger, #ff4848); }
+.stat-card-warning { border-left: 3px solid var(--warning, #ffaa00); }
+
+/* Report section spacing */
+.report-section { margin-top: 32px; }
+
+/* Quote items container reuses invoice item-row styles — ensure spacing */
+#quote-items-container .item-row { margin-bottom: 8px; }
+
+/* Modal overlay active state (matches existing .invoice-modal styles) */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.active { display:flex; }
+.modal-overlay > .modal-sheet { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.modal-sheet .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border); }
+.modal-sheet .modal-title { font-size:18px; font-weight:700; color:var(--text); }
+.modal-sheet .modal-close { background:none; border:none; font-size:22px; cursor:pointer; color:var(--text-muted); line-height:1; padding:0; }
+.modal-sheet .modal-close:hover { color:var(--text); }
+.modal-sheet .modal-body { padding:24px; }
+.modal-sheet .modal-footer { display:flex; justify-content:flex-end; gap:12px; padding:16px 24px; border-top:1px solid var(--border); }

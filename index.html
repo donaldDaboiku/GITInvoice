@@ -102,6 +102,21 @@
                     </div>
                 </div>
 
+                <div class="nav-section team-feature" id="nav-section-features">
+                    <div class="nav-section-title">Business Tools</div>
+                    <div class="nav-item owner-only" data-page="inventory">
+                        <span class="nav-icon">📦</span>
+                        <span>Inventory</span>
+                    </div>
+                    <div class="nav-item owner-only" data-page="expenses">
+                        <span class="nav-icon">💸</span>
+                        <span>Expenses</span>
+                    </div>
+                    <div class="nav-item" data-page="quotes">
+                        <span class="nav-icon">📋</span>
+                        <span>Quotes</span>
+                    </div>
+                </div>
                 <div class="nav-section owner-only">
                     <div class="nav-section-title">System</div>
                     <div class="nav-item" data-page="settings">
@@ -169,6 +184,9 @@
                             <div class="stat-change negative"><span>⚠️ Requires attention</span></div>
                         </div>
                     </div>
+
+                    <!-- Extra stats for team/business tiers -->
+                    <div id="dashboard-extras" style="margin-bottom:8px"></div>
 
                     <div class="invoice-section">
                         <div class="section-header">
@@ -269,6 +287,33 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Inventory Page -->
+            <div id="inventory-page" class="page hidden">
+                <div class="header">
+                    <div class="header-title"><span>📦</span><span>Inventory</span></div>
+                    <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
+                </div>
+                <div class="content"></div>
+            </div>
+
+            <!-- Expenses Page -->
+            <div id="expenses-page" class="page hidden">
+                <div class="header">
+                    <div class="header-title"><span>💸</span><span>Expenses</span></div>
+                    <button class="btn btn-primary" onclick="openExpenseModal()">+ Log Expense</button>
+                </div>
+                <div class="content"></div>
+            </div>
+
+            <!-- Quotes Page -->
+            <div id="quotes-page" class="page hidden">
+                <div class="header">
+                    <div class="header-title"><span>📋</span><span>Quotes</span></div>
+                    <button class="btn btn-primary" onclick="openQuoteModal()">+ New Quote</button>
+                </div>
+                <div class="content"></div>
             </div>
 
             <!-- Settings Page -->
@@ -795,6 +840,165 @@
             <div class="license-privacy-note" style="margin-top:16px;">
                 <span>🔒</span>
                 <span>One-time purchase. No subscriptions. Your data <strong>never leaves this device</strong>.</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== PRODUCT MODAL ==================== -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-sheet" style="max-width:560px">
+            <div class="modal-header">
+                <div class="modal-title" id="product-modal-title">Add Product</div>
+                <button class="modal-close" onclick="closeProductModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Product Name *</label>
+                        <input type="text" class="form-input" id="product-name" placeholder="e.g. Rice (50kg bag)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SKU / Code</label>
+                        <input type="text" class="form-input" id="product-sku" placeholder="e.g. RICE-50KG">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-input" id="product-description" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Selling Price *</label>
+                        <input type="number" class="form-input" id="product-sell-price" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cost Price</label>
+                        <input type="number" class="form-input" id="product-cost-price" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group full-width" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-secondary);border-radius:8px">
+                        <input type="checkbox" id="product-track-stock" onchange="toggleStockFields()" style="width:18px;height:18px;cursor:pointer">
+                        <label for="product-track-stock" style="cursor:pointer;font-weight:500">Track stock quantity for this product</label>
+                    </div>
+                    <div id="stock-fields" class="form-group full-width" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                        <div class="form-group">
+                            <label class="form-label">Current Stock (units)</label>
+                            <input type="number" class="form-input" id="product-stock-qty" placeholder="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Low Stock Alert at</label>
+                            <input type="number" class="form-input" id="product-low-stock" placeholder="5" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== EXPENSE MODAL ==================== -->
+    <div id="expense-modal" class="modal-overlay">
+        <div class="modal-sheet" style="max-width:500px">
+            <div class="modal-header">
+                <div class="modal-title" id="expense-modal-title">Log Expense</div>
+                <button class="modal-close" onclick="closeExpenseModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">Description *</label>
+                        <input type="text" class="form-input" id="expense-description" placeholder="e.g. Monthly office rent">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" class="form-input" id="expense-amount" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date *</label>
+                        <input type="date" class="form-input" id="expense-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="expense-category">
+                            <option>Rent</option><option>Utilities</option><option>Salaries</option>
+                            <option>Supplies</option><option>Transport</option><option>Marketing</option>
+                            <option>Equipment</option><option>Taxes</option><option>Insurance</option>
+                            <option selected>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" id="expense-payment-method">
+                            <option>Cash</option><option>Bank Transfer</option><option>Card</option>
+                            <option>Mobile Money</option><option>Cheque</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" id="expense-notes" rows="2" placeholder="Optional notes or reference"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeExpenseModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveExpense()">Save Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== QUOTE MODAL ==================== -->
+    <div id="quote-modal" class="modal-overlay">
+        <div class="modal-sheet" style="max-width:700px">
+            <div class="modal-header">
+                <div class="modal-title" id="quote-modal-title">New Quote</div>
+                <button class="modal-close" onclick="closeQuoteModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Quote Number</label>
+                        <input type="text" class="form-input" id="quote-number" placeholder="QTE-2026-0001">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="quote-date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Valid Until</label>
+                        <input type="date" class="form-input" id="quote-valid-until">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Client Name *</label>
+                        <input type="text" class="form-input" id="quote-customer-name" placeholder="Client or company name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client Email</label>
+                        <input type="email" class="form-input" id="quote-customer-email" placeholder="client@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client Phone</label>
+                        <input type="tel" class="form-input" id="quote-customer-phone" placeholder="+234 800 000 0000">
+                    </div>
+                </div>
+                <div class="items-header" style="margin-top:20px">
+                    <span>Line Items</span>
+                </div>
+                <div id="quote-items-container"></div>
+                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addQuoteItem()">+ Add Item</button>
+                <div class="invoice-totals" style="margin-top:16px">
+                    <div class="totals-row"><span>Subtotal:</span><span id="quote-subtotal">—</span></div>
+                    <div class="totals-row"><span>Tax:</span><span id="quote-tax">—</span></div>
+                    <div class="totals-row total-row"><span>Total:</span><span id="quote-total">—</span></div>
+                </div>
+                <div class="form-group" style="margin-top:16px">
+                    <label class="form-label">Notes / Terms</label>
+                    <textarea class="form-textarea" id="quote-notes" rows="2" placeholder="Payment terms, validity, conditions..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeQuoteModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveQuote()">Save Quote</button>
             </div>
         </div>
     </div>

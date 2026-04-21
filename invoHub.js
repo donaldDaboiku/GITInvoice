@@ -3,7 +3,6 @@
 
 // ==================== CONFIGURATION ====================
  const LICENSE_VALIDATE_URL = '/api/validate-license';
-const GUMROAD_URL = 'https://YOUR-STORE.gumroad.com/l/invohub';
 
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
@@ -78,6 +77,40 @@ function seedDemoData(tier) {
     saveCustomers(customers);
     saveInvoices(invoices);
 
+    // Seed products, expenses, quotes for team/business tiers
+    if (tier === 'team' || tier === 'business') {
+        const demoProducts = tier === 'team' ? [
+            { id: 'demo-p1', name: 'Bulk Rice (50kg bags)', sku: 'RICE-50KG', description: '', sellPrice: 45000, costPrice: 38000, trackStock: true, stockQty: 45, lowStockAlert: 10, createdAt: daysAgo(90), updatedAt: daysAgo(1) },
+            { id: 'demo-p2', name: 'Vegetable Oil (25L)',   sku: 'OIL-25L',   description: '', sellPrice: 28000, costPrice: 22000, trackStock: true, stockQty: 8,  lowStockAlert: 10, createdAt: daysAgo(90), updatedAt: daysAgo(1) },
+            { id: 'demo-p3', name: 'Frozen Chicken (1kg)',  sku: 'CHKN-1KG',  description: '', sellPrice: 4500,  costPrice: 3200,  trackStock: true, stockQty: 120,lowStockAlert: 20, createdAt: daysAgo(60), updatedAt: daysAgo(1) },
+            { id: 'demo-p4', name: 'Sugar (50kg bags)',     sku: 'SUGR-50KG', description: '', sellPrice: 38000, costPrice: 32000, trackStock: true, stockQty: 25, lowStockAlert: 5,  createdAt: daysAgo(60), updatedAt: daysAgo(1) },
+        ] : [
+            { id: 'demo-p1', name: 'Structural Steel',        sku: 'STL-001', description: 'Per tonne', sellPrice: 850000,  costPrice: 680000,  trackStock: false, stockQty: null, lowStockAlert: null, createdAt: daysAgo(120), updatedAt: daysAgo(1) },
+            { id: 'demo-p2', name: 'Roofing Materials',       sku: 'RF-001',  description: 'Per job',   sellPrice: 2800000, costPrice: 2100000, trackStock: false, stockQty: null, lowStockAlert: null, createdAt: daysAgo(120), updatedAt: daysAgo(1) },
+            { id: 'demo-p3', name: 'Architectural Consulting', sku: 'AC-001', description: 'Per project',sellPrice: 1500000, costPrice: 800000,  trackStock: false, stockQty: null, lowStockAlert: null, createdAt: daysAgo(90),  updatedAt: daysAgo(1) },
+        ];
+        saveProducts(demoProducts);
+
+        const demoExpenses = tier === 'team' ? [
+            { id: 'demo-e1', description: 'Warehouse rent — April', amount: 180000, date: daysAgo(20), category: 'Rent',      paymentMethod: 'Bank Transfer', notes: '', createdBy: 'owner', createdAt: daysAgo(20) },
+            { id: 'demo-e2', description: 'Staff salaries — April', amount: 350000, date: daysAgo(18), category: 'Salaries',  paymentMethod: 'Bank Transfer', notes: '3 cashiers', createdBy: 'owner', createdAt: daysAgo(18) },
+            { id: 'demo-e3', description: 'Cold storage electricity',amount: 45000, date: daysAgo(10), category: 'Utilities', paymentMethod: 'Card', notes: '', createdBy: 'owner', createdAt: daysAgo(10) },
+        ] : [
+            { id: 'demo-e1', description: 'Site equipment hire',    amount: 1200000, date: daysAgo(60), category: 'Equipment',  paymentMethod: 'Bank Transfer', notes: 'Crane + scaffolding', createdBy: 'owner', createdAt: daysAgo(60) },
+            { id: 'demo-e2', description: 'Worker wages — March',   amount: 2400000, date: daysAgo(45), category: 'Salaries',   paymentMethod: 'Bank Transfer', notes: '30 workers x 30 days', createdBy: 'owner', createdAt: daysAgo(45) },
+            { id: 'demo-e3', description: 'Insurance premium',      amount: 350000,  date: daysAgo(30), category: 'Insurance',  paymentMethod: 'Bank Transfer', notes: 'Annual policy', createdBy: 'owner', createdAt: daysAgo(30) },
+            { id: 'demo-e4', description: 'Office rent — April',    amount: 280000,  date: daysAgo(20), category: 'Rent',       paymentMethod: 'Bank Transfer', notes: '', createdBy: 'owner', createdAt: daysAgo(20) },
+        ];
+        saveExpenses(demoExpenses);
+
+        const demoQuotes = tier === 'team' ? [
+            { id: 'demo-q1', number: 'QTE-2026-0001', customerName: 'Blessing Catering Co.', customerEmail: 'blessing@blesscater.com', customerPhone: '0705 444 5566', date: daysAgo(5), validUntil: daysAhead(25), items: [{ description: 'Frozen Chicken (1kg packs)', quantity: 100, price: 4500, total: 450000 }, { description: 'Tomato Paste (crates)', quantity: 10, price: 18000, total: 180000 }], subtotal: 630000, tax: 63000, total: 693000, notes: 'Quote valid for 30 days. Bulk discount applied.', status: 'pending', createdAt: daysAgo(5) },
+        ] : [
+            { id: 'demo-q1', number: 'QTE-2026-0001', customerName: 'Abuja Capital Estates', customerEmail: 'contracts@abujacapital.ng', customerPhone: '0803 777 8899', date: daysAgo(10), validUntil: daysAhead(20), items: [{ description: 'Block C Foundation & Framing', quantity: 1, price: 5500000, total: 5500000 }, { description: 'Electrical Rough-in', quantity: 1, price: 1200000, total: 1200000 }], subtotal: 6700000, tax: 670000, total: 7370000, notes: 'Quote valid 30 days. Subject to site survey confirmation.', status: 'pending', createdAt: daysAgo(10) },
+        ];
+        saveQuotes(demoQuotes);
+    }
+
     // Pre-fill company name in settings
     const settings = getSettings();
     if (!settings.companyName) {
@@ -102,8 +135,27 @@ const STORAGE_KEYS = {
     INVOICE_COUNTER:  'invohub_invoice_counter',
     LICENSE_TIER:     'invohub_license_tier',
     USERS:            'invohub_users',
-    SESSION:          'invohub_session'
+    SESSION:          'invohub_session',
+    DEVICE_ID:        'invohub_device_id',
+    PRODUCTS:         'invohub_products',
+    EXPENSES:         'invohub_expenses',
+    QUOTES:           'invohub_quotes',
 };
+
+// Returns a stable UUID for this browser/device. Generated once, stored forever.
+// Sent with every license API call so the backend can track seats per device.
+function getDeviceId() {
+    let id = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+    if (!id) {
+        id = crypto.randomUUID ? crypto.randomUUID()
+           : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+               const r = Math.random() * 16 | 0;
+               return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+             });
+        localStorage.setItem(STORAGE_KEYS.DEVICE_ID, id);
+    }
+    return id;
+}
 
 // ==================== TRIAL CONFIG ====================
 // Free trial: full app access until limits hit, then paywall.
@@ -283,7 +335,7 @@ async function activateLicense() {
         const response = await fetch(LICENSE_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ license_key: key, action: 'activate' })
+            body: JSON.stringify({ license_key: key, action: 'activate', device_id: getDeviceId() })
         });
 
         const data = await response.json();
@@ -331,7 +383,7 @@ async function silentLicenseCheck(key, action) {
         const response = await fetch(LICENSE_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ license_key: key, action: 'check' })
+            body: JSON.stringify({ license_key: key, action: 'check', device_id: getDeviceId() })
         });
 
         const data = await response.json();
@@ -374,7 +426,7 @@ async function deactivateLicense() {
             await fetch(LICENSE_VALIDATE_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ license_key: key, action: 'deactivate' })
+                body: JSON.stringify({ license_key: key, action: 'deactivate', device_id: getDeviceId() })
             });
         } catch (err) {
             console.warn('Could not reach server to free seat — deactivating locally anyway');
@@ -494,6 +546,500 @@ function getUsersMax() {
     return { solo: 1, team: 10, business: 25 }[tier] || 1;
 }
 
+// ==================== TIER FEATURE GATES ====================
+function getTier() { return localStorage.getItem(STORAGE_KEYS.LICENSE_TIER) || 'solo'; }
+function canUseInventory() { const t = getTier(); return t === 'team' || t === 'business'; }
+function canUseExpenses()  { const t = getTier(); return t === 'team' || t === 'business'; }
+function canUseQuotes()    { const t = getTier(); return t === 'team' || t === 'business'; }
+
+function requireTierFeature(featureName) {
+    showToast(`${featureName} is available on Team & Business plans. Upgrade to unlock.`, 'info');
+    showPaywall('upgrade');
+}
+
+// ==================== PRODUCTS / INVENTORY ====================
+function getProducts() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]'); } catch(e) { return []; }
+}
+function saveProducts(products) {
+    try { localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products)); return true; } catch(e) { showToast('Storage full.','error'); return false; }
+}
+
+let currentProduct = null;
+function loadInventory() {
+    if (!canUseInventory()) { requireTierFeature('Inventory Management'); return; }
+    const products = getProducts();
+    const sym = getCurrencySymbol();
+    const lowStock = products.filter(p => p.trackStock && p.stockQty <= p.lowStockAlert);
+    const container = document.getElementById('inventory-page');
+    if (!container) return;
+
+    const alertBanner = lowStock.length > 0
+        ? `<div class="low-stock-banner">⚠️ ${lowStock.length} product${lowStock.length>1?'s':''} running low on stock: ${lowStock.map(p=>`<strong>${escapeHtml(p.name)}</strong>`).join(', ')}</div>`
+        : '';
+
+    const totalValue = products.reduce((s,p) => s + (p.trackStock ? (p.stockQty||0)*(p.costPrice||0) : 0), 0);
+
+    container.querySelector('.content').innerHTML = `
+        ${alertBanner}
+        <div class="stats-grid" style="margin-bottom:24px;">
+            <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-value">${products.length}</div></div>
+            <div class="stat-card"><div class="stat-label">Low Stock Items</div><div class="stat-value" style="${lowStock.length>0?'color:var(--danger)':''}">${lowStock.length}</div></div>
+            <div class="stat-card"><div class="stat-label">Inventory Value</div><div class="stat-value">${formatCurrency(totalValue)}</div></div>
+        </div>
+        <div class="section-header">
+            <div class="section-title">Product Catalogue</div>
+            <button class="btn btn-primary" onclick="openProductModal()">+ Add Product</button>
+        </div>
+        ${products.length === 0 ? `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No products yet</div><div class="empty-sub">Add products to your catalogue so you can pick them quickly when creating invoices.</div><button class="btn btn-primary" onclick="openProductModal()">+ Add First Product</button></div>` : `
+        <table class="invoice-table">
+            <thead><tr><th>Product</th><th>SKU</th><th>Sell Price</th><th>Cost Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>${products.map(p => {
+                const stockStatus = !p.trackStock ? '<span class="badge">Service</span>'
+                    : p.stockQty <= 0 ? '<span class="badge badge-danger">Out of stock</span>'
+                    : p.stockQty <= p.lowStockAlert ? '<span class="badge badge-warning">Low stock</span>'
+                    : '<span class="badge badge-success">In stock</span>';
+                return `<tr>
+                    <td><strong>${escapeHtml(p.name)}</strong>${p.description?`<br><small style="color:var(--text-muted)">${escapeHtml(p.description)}</small>`:''}</td>
+                    <td><code>${escapeHtml(p.sku||'—')}</code></td>
+                    <td>${formatCurrency(p.sellPrice||0)}</td>
+                    <td>${p.costPrice?formatCurrency(p.costPrice):'—'}</td>
+                    <td>${p.trackStock ? `<strong>${p.stockQty}</strong> units` : '—'}</td>
+                    <td>${stockStatus}</td>
+                    <td style="white-space:nowrap">
+                        <button class="btn btn-secondary btn-sm" onclick="editProduct('${p.id}')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Delete</button>
+                    </td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table>`}`;
+}
+
+function openProductModal(productId = null) {
+    currentProduct = productId ? getProducts().find(p=>p.id===productId) : null;
+    const modal = document.getElementById('product-modal');
+    if (!modal) return;
+    document.getElementById('product-modal-title').textContent = currentProduct ? 'Edit Product' : 'Add Product';
+    document.getElementById('product-name').value = currentProduct?.name || '';
+    document.getElementById('product-sku').value = currentProduct?.sku || '';
+    document.getElementById('product-description').value = currentProduct?.description || '';
+    document.getElementById('product-sell-price').value = currentProduct?.sellPrice || '';
+    document.getElementById('product-cost-price').value = currentProduct?.costPrice || '';
+    document.getElementById('product-track-stock').checked = currentProduct?.trackStock ?? true;
+    document.getElementById('product-stock-qty').value = currentProduct?.stockQty ?? 0;
+    document.getElementById('product-low-stock').value = currentProduct?.lowStockAlert ?? 5;
+    toggleStockFields();
+    modal.classList.add('active');
+}
+
+function toggleStockFields() {
+    const track = document.getElementById('product-track-stock').checked;
+    document.getElementById('stock-fields').style.display = track ? '' : 'none';
+}
+
+function closeProductModal() {
+    document.getElementById('product-modal').classList.remove('active');
+    currentProduct = null;
+}
+
+function saveProduct() {
+    const name = document.getElementById('product-name').value.trim();
+    const sellPrice = parseFloat(document.getElementById('product-sell-price').value);
+    if (!name || isNaN(sellPrice)) { showToast('Product name and sell price are required.','error'); return; }
+    const trackStock = document.getElementById('product-track-stock').checked;
+    const product = {
+        id: currentProduct ? currentProduct.id : generateId(),
+        name,
+        sku: document.getElementById('product-sku').value.trim(),
+        description: document.getElementById('product-description').value.trim(),
+        sellPrice,
+        costPrice: parseFloat(document.getElementById('product-cost-price').value) || 0,
+        trackStock,
+        stockQty: trackStock ? parseInt(document.getElementById('product-stock-qty').value)||0 : null,
+        lowStockAlert: trackStock ? parseInt(document.getElementById('product-low-stock').value)||5 : null,
+        createdAt: currentProduct ? currentProduct.createdAt : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+    const products = getProducts();
+    if (currentProduct) {
+        const idx = products.findIndex(p=>p.id===product.id);
+        if (idx !== -1) products[idx] = product;
+    } else { products.push(product); }
+    if (saveProducts(products)) { closeProductModal(); loadInventory(); showToast('Product saved!'); }
+}
+
+function editProduct(id) { openProductModal(id); }
+function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
+    const products = getProducts().filter(p=>p.id!==id);
+    saveProducts(products); loadInventory(); showToast('Product deleted.');
+}
+
+// Deduct stock when invoice is marked paid
+function deductStockForInvoice(invoice) {
+    if (!canUseInventory()) return;
+    const products = getProducts();
+    let changed = false;
+    invoice.items.forEach(item => {
+        const match = products.find(p => p.name.toLowerCase() === item.description.toLowerCase() && p.trackStock);
+        if (match) {
+            match.stockQty = Math.max(0, (match.stockQty||0) - item.quantity);
+            changed = true;
+        }
+    });
+    if (changed) saveProducts(products);
+}
+
+// Show product picker inside invoice form
+function showProductPicker(rowEl) {
+    if (!canUseInventory()) return;
+    const products = getProducts();
+    if (products.length === 0) { showToast('No products in catalogue yet. Add products in Inventory.','info'); return; }
+    const existing = document.getElementById('product-picker-dropdown');
+    if (existing) existing.remove();
+    const dropdown = document.createElement('div');
+    dropdown.id = 'product-picker-dropdown';
+    dropdown.className = 'product-picker-dropdown';
+    dropdown.innerHTML = products.map(p =>
+        `<div class="product-picker-item" onclick="selectProductForRow(this,'${p.id}')">
+            <strong>${escapeHtml(p.name)}</strong>
+            <span>${formatCurrency(p.sellPrice)}${p.trackStock?' · '+p.stockQty+' in stock':''}</span>
+        </div>`).join('');
+    rowEl.querySelector('.item-description').parentNode.appendChild(dropdown);
+    dropdown._row = rowEl;
+    setTimeout(()=>document.addEventListener('click', ()=>dropdown.remove(), {once:true}), 50);
+}
+
+function selectProductForRow(itemEl, productId) {
+    const product = getProducts().find(p=>p.id===productId);
+    if (!product) return;
+    const dropdown = document.getElementById('product-picker-dropdown');
+    const row = dropdown?._row || itemEl.closest('.item-row');
+    if (!row) return;
+    row.querySelector('.item-description').value = product.name;
+    row.querySelector('.item-price').value = product.sellPrice;
+    calculateItemTotal(row);
+    calculateInvoiceTotal();
+    dropdown?.remove();
+}
+
+// ==================== EXPENSES ====================
+function getExpenses() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.EXPENSES) || '[]'); } catch(e) { return []; }
+}
+function saveExpenses(expenses) {
+    try { localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses)); return true; } catch(e) { showToast('Storage full.','error'); return false; }
+}
+
+const EXPENSE_CATEGORIES = ['Rent','Utilities','Salaries','Supplies','Transport','Marketing','Equipment','Taxes','Insurance','Other'];
+let currentExpense = null;
+
+function loadExpenses() {
+    if (!canUseExpenses()) { requireTierFeature('Expense Tracking'); return; }
+    const expenses = getExpenses();
+    const sym = getCurrencySymbol();
+    const now = new Date();
+    const thisMonth = expenses.filter(e => { const d=new Date(e.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+    const totalThisMonth = thisMonth.reduce((s,e)=>s+e.amount,0);
+    const totalAll = expenses.reduce((s,e)=>s+e.amount,0);
+    const byCategory = {};
+    expenses.forEach(e=>{ byCategory[e.category]=(byCategory[e.category]||0)+e.amount; });
+    const topCategory = Object.entries(byCategory).sort((a,b)=>b[1]-a[1])[0];
+
+    const container = document.getElementById('expenses-page');
+    if (!container) return;
+    container.querySelector('.content').innerHTML = `
+        <div class="stats-grid" style="margin-bottom:24px;">
+            <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value">${formatCurrency(totalThisMonth)}</div></div>
+            <div class="stat-card"><div class="stat-label">Total Expenses</div><div class="stat-value">${formatCurrency(totalAll)}</div></div>
+            <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:18px">${topCategory?topCategory[0]:'—'}</div></div>
+        </div>
+        <div class="section-header">
+            <div class="section-title">Expense Log</div>
+            <button class="btn btn-primary" onclick="openExpenseModal()">+ Add Expense</button>
+        </div>
+        ${expenses.length===0 ? `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">No expenses logged</div><div class="empty-sub">Track your business expenses to understand your true profit margins.</div><button class="btn btn-primary" onclick="openExpenseModal()">+ Log First Expense</button></div>` : `
+        <table class="invoice-table">
+            <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Paid via</th><th>Actions</th></tr></thead>
+            <tbody>${expenses.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>`<tr>
+                <td>${formatDate(e.date)}</td>
+                <td>${escapeHtml(e.description)}</td>
+                <td><span class="badge">${escapeHtml(e.category)}</span></td>
+                <td><strong>${formatCurrency(e.amount)}</strong></td>
+                <td>${escapeHtml(e.paymentMethod||'—')}</td>
+                <td style="white-space:nowrap">
+                    <button class="btn btn-secondary btn-sm" onclick="editExpense('${e.id}')">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteExpense('${e.id}')">Delete</button>
+                </td>
+            </tr>`).join('')}</tbody>
+        </table>`}`;
+}
+
+function openExpenseModal(expenseId=null) {
+    currentExpense = expenseId ? getExpenses().find(e=>e.id===expenseId) : null;
+    const modal = document.getElementById('expense-modal');
+    if (!modal) return;
+    document.getElementById('expense-modal-title').textContent = currentExpense ? 'Edit Expense' : 'Log Expense';
+    document.getElementById('expense-description').value = currentExpense?.description||'';
+    document.getElementById('expense-amount').value = currentExpense?.amount||'';
+    document.getElementById('expense-date').value = currentExpense?.date||today();
+    document.getElementById('expense-category').value = currentExpense?.category||'Other';
+    document.getElementById('expense-payment-method').value = currentExpense?.paymentMethod||'Cash';
+    document.getElementById('expense-notes').value = currentExpense?.notes||'';
+    modal.classList.add('active');
+}
+function closeExpenseModal() { document.getElementById('expense-modal').classList.remove('active'); currentExpense=null; }
+function editExpense(id) { openExpenseModal(id); }
+function deleteExpense(id) {
+    if (!confirm('Delete this expense?')) return;
+    saveExpenses(getExpenses().filter(e=>e.id!==id)); loadExpenses(); showToast('Expense deleted.');
+}
+function saveExpense() {
+    const description = document.getElementById('expense-description').value.trim();
+    const amount = parseFloat(document.getElementById('expense-amount').value);
+    const date = document.getElementById('expense-date').value;
+    if (!description || isNaN(amount) || !date) { showToast('Description, amount, and date are required.','error'); return; }
+    const expense = {
+        id: currentExpense ? currentExpense.id : generateId(),
+        description, amount, date,
+        category: document.getElementById('expense-category').value,
+        paymentMethod: document.getElementById('expense-payment-method').value,
+        notes: document.getElementById('expense-notes').value.trim(),
+        createdBy: getSession()?.username || 'owner',
+        createdAt: currentExpense ? currentExpense.createdAt : new Date().toISOString()
+    };
+    const expenses = getExpenses();
+    if (currentExpense) { const idx=expenses.findIndex(e=>e.id===expense.id); if(idx!==-1) expenses[idx]=expense; }
+    else expenses.push(expense);
+    if (saveExpenses(expenses)) { closeExpenseModal(); loadExpenses(); showToast('Expense saved!'); }
+}
+
+// ==================== QUOTES / ESTIMATES ====================
+function getQuotes() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.QUOTES) || '[]'); } catch(e) { return []; }
+}
+function saveQuotes(quotes) {
+    try { localStorage.setItem(STORAGE_KEYS.QUOTES, JSON.stringify(quotes)); return true; } catch(e) { showToast('Storage full.','error'); return false; }
+}
+
+let currentQuote = null;
+function loadQuotes() {
+    if (!canUseQuotes()) { requireTierFeature('Quotes & Estimates'); return; }
+    const quotes = getQuotes();
+    const container = document.getElementById('quotes-page');
+    if (!container) return;
+    const pending = quotes.filter(q=>q.status==='pending').length;
+    const accepted = quotes.filter(q=>q.status==='accepted').length;
+    const totalValue = quotes.filter(q=>q.status==='pending').reduce((s,q)=>s+q.total,0);
+
+    container.querySelector('.content').innerHTML = `
+        <div class="stats-grid" style="margin-bottom:24px;">
+            <div class="stat-card"><div class="stat-label">Total Quotes</div><div class="stat-value">${quotes.length}</div></div>
+            <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value">${pending}</div></div>
+            <div class="stat-card"><div class="stat-label">Accepted</div><div class="stat-value" style="color:var(--success)">${accepted}</div></div>
+            <div class="stat-card"><div class="stat-label">Pipeline Value</div><div class="stat-value">${formatCurrency(totalValue)}</div></div>
+        </div>
+        <div class="section-header">
+            <div class="section-title">Quotes & Estimates</div>
+            <button class="btn btn-primary" onclick="openQuoteModal()">+ New Quote</button>
+        </div>
+        ${quotes.length===0 ? `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No quotes yet</div><div class="empty-sub">Create quotes to send clients before they commit. Convert accepted quotes to invoices in one click.</div><button class="btn btn-primary" onclick="openQuoteModal()">+ Create First Quote</button></div>` : `
+        <table class="invoice-table">
+            <thead><tr><th>Quote #</th><th>Client</th><th>Date</th><th>Valid Until</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>${quotes.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(q=>{
+                const statusColors={pending:'',accepted:'badge-success',declined:'badge-danger',expired:'badge-warning'};
+                return `<tr>
+                    <td><strong>${escapeHtml(q.number)}</strong></td>
+                    <td>${escapeHtml(q.customerName)}</td>
+                    <td>${formatDate(q.date)}</td>
+                    <td>${formatDate(q.validUntil)}</td>
+                    <td><strong>${formatCurrency(q.total)}</strong></td>
+                    <td><span class="badge ${statusColors[q.status]||''}">${q.status}</span></td>
+                    <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap">
+                        <button class="btn btn-secondary btn-sm" onclick="viewQuote('${q.id}')">View</button>
+                        ${q.status==='pending'?`<button class="btn btn-primary btn-sm" onclick="convertQuoteToInvoice('${q.id}')">→ Invoice</button>`:''}
+                        <button class="btn btn-danger btn-sm" onclick="deleteQuote('${q.id}')">Delete</button>
+                    </td>
+                </tr>`;
+            }).join('')}</tbody>
+        </table>`}`;
+}
+
+function openQuoteModal(quoteId=null) {
+    currentQuote = quoteId ? getQuotes().find(q=>q.id===quoteId) : null;
+    const modal = document.getElementById('quote-modal');
+    if (!modal) return;
+    document.getElementById('quote-modal-title').textContent = currentQuote ? 'Edit Quote' : 'New Quote';
+    document.getElementById('quote-number').value = currentQuote?.number || generateQuoteNumber();
+    document.getElementById('quote-customer-name').value = currentQuote?.customerName||'';
+    document.getElementById('quote-customer-email').value = currentQuote?.customerEmail||'';
+    document.getElementById('quote-customer-phone').value = currentQuote?.customerPhone||'';
+    document.getElementById('quote-date').value = currentQuote?.date||today();
+    const validUntil = new Date(); validUntil.setDate(validUntil.getDate()+30);
+    document.getElementById('quote-valid-until').value = currentQuote?.validUntil||validUntil.toISOString().split('T')[0];
+    document.getElementById('quote-notes').value = currentQuote?.notes||'';
+    const itemsContainer = document.getElementById('quote-items-container');
+    if (currentQuote && currentQuote.items.length>0) {
+        itemsContainer.innerHTML = currentQuote.items.map(item=>`
+            <div class="item-row">
+                <div class="form-group"><input type="text" class="form-input item-description" value="${escapeHtml(item.description)}"></div>
+                <div class="form-group"><input type="number" class="form-input item-quantity" value="${item.quantity}" min="1"></div>
+                <div class="form-group"><input type="number" class="form-input item-price" value="${item.price}" step="0.01" min="0"></div>
+                <div class="form-group"><input type="number" class="form-input item-total" value="${item.total}" readonly></div>
+                <button type="button" class="remove-item-btn" onclick="removeQuoteItem(this)">×</button>
+            </div>`).join('');
+    } else {
+        itemsContainer.innerHTML = `<div class="item-row">
+            <div class="form-group"><input type="text" class="form-input item-description" placeholder="Description"></div>
+            <div class="form-group"><input type="number" class="form-input item-quantity" placeholder="Qty" value="1" min="1"></div>
+            <div class="form-group"><input type="number" class="form-input item-price" placeholder="Price" step="0.01" min="0"></div>
+            <div class="form-group"><input type="number" class="form-input item-total" placeholder="Total" readonly></div>
+            <button type="button" class="remove-item-btn" onclick="removeQuoteItem(this)" style="visibility:hidden">×</button>
+        </div>`;
+    }
+    calculateQuoteTotal();
+    modal.classList.add('active');
+}
+function closeQuoteModal() { document.getElementById('quote-modal').classList.remove('active'); currentQuote=null; }
+
+function generateQuoteNumber() {
+    const year = new Date().getFullYear();
+    const quotes = getQuotes();
+    return `QTE-${year}-${String(quotes.length+1).padStart(4,'0')}`;
+}
+
+function addQuoteItem() {
+    const container = document.getElementById('quote-items-container');
+    const row = document.createElement('div'); row.className='item-row';
+    row.innerHTML=`<div class="form-group"><input type="text" class="form-input item-description" placeholder="Description"></div>
+        <div class="form-group"><input type="number" class="form-input item-quantity" placeholder="Qty" value="1" min="1"></div>
+        <div class="form-group"><input type="number" class="form-input item-price" placeholder="Price" step="0.01" min="0"></div>
+        <div class="form-group"><input type="number" class="form-input item-total" placeholder="Total" readonly></div>
+        <button type="button" class="remove-item-btn" onclick="removeQuoteItem(this)">×</button>`;
+    container.appendChild(row);
+    container.querySelectorAll('.item-row').forEach((r,i)=>{ r.querySelector('.remove-item-btn').style.visibility=i===0&&container.children.length===1?'hidden':'visible'; });
+    row.querySelectorAll('.item-quantity,.item-price').forEach(inp=>inp.addEventListener('input',()=>{ calculateItemTotal(row); calculateQuoteTotal(); }));
+}
+function removeQuoteItem(btn) {
+    const container = document.getElementById('quote-items-container');
+    if (container.children.length>1) { btn.closest('.item-row').remove(); calculateQuoteTotal(); }
+}
+function calculateQuoteTotal() {
+    const settings = getSettings(); const taxRate=(settings.taxRate||0)/100;
+    let subtotal=0;
+    document.querySelectorAll('#quote-items-container .item-row').forEach(row=>{
+        const qty=parseFloat(row.querySelector('.item-quantity').value)||0;
+        const price=parseFloat(row.querySelector('.item-price').value)||0;
+        const total=qty*price; row.querySelector('.item-total').value=total.toFixed(2); subtotal+=total;
+    });
+    const tax=subtotal*taxRate; const sym=getCurrencySymbol();
+    const subEl=document.getElementById('quote-subtotal'); const taxEl=document.getElementById('quote-tax'); const totEl=document.getElementById('quote-total');
+    if(subEl) subEl.textContent=`${sym}${subtotal.toFixed(2)}`;
+    if(taxEl) taxEl.textContent=`${sym}${tax.toFixed(2)}`;
+    if(totEl) totEl.textContent=`${sym}${(subtotal+tax).toFixed(2)}`;
+}
+
+function saveQuote() {
+    const number=document.getElementById('quote-number').value.trim();
+    const customerName=document.getElementById('quote-customer-name').value.trim();
+    const date=document.getElementById('quote-date').value;
+    const validUntil=document.getElementById('quote-valid-until').value;
+    if (!number||!customerName||!date) { showToast('Quote number, client name and date are required.','error'); return; }
+    const items=[];
+    document.querySelectorAll('#quote-items-container .item-row').forEach(row=>{
+        const description=row.querySelector('.item-description').value.trim();
+        const quantity=parseFloat(row.querySelector('.item-quantity').value);
+        const price=parseFloat(row.querySelector('.item-price').value);
+        if(description&&quantity>0&&price>=0) items.push({description,quantity,price,total:quantity*price});
+    });
+    if(items.length===0) { showToast('Add at least one item.','error'); return; }
+    const subtotal=items.reduce((s,i)=>s+i.total,0);
+    const settings=getSettings(); const taxRate=(settings.taxRate||0)/100;
+    const tax=subtotal*taxRate; const total=subtotal+tax;
+    const quote={
+        id: currentQuote?currentQuote.id:generateId(), number, customerName,
+        customerEmail: document.getElementById('quote-customer-email').value.trim(),
+        customerPhone: document.getElementById('quote-customer-phone').value.trim(),
+        date, validUntil, items, subtotal, tax, total,
+        notes: document.getElementById('quote-notes').value.trim(),
+        status: currentQuote?currentQuote.status:'pending',
+        createdAt: currentQuote?currentQuote.createdAt:new Date().toISOString()
+    };
+    const quotes=getQuotes();
+    if(currentQuote) { const idx=quotes.findIndex(q=>q.id===quote.id); if(idx!==-1) quotes[idx]=quote; } else quotes.push(quote);
+    if(saveQuotes(quotes)) { closeQuoteModal(); loadQuotes(); showToast('Quote saved!'); }
+}
+
+function viewQuote(id) {
+    const quote=getQuotes().find(q=>q.id===id);
+    if(!quote) return;
+    const sym=getCurrencySymbol();
+    const actions = quote.status==='pending' ? `
+        <div style="display:flex;gap:8px;margin-top:16px">
+            <button class="btn btn-primary" onclick="convertQuoteToInvoice('${id}');closeViewModal()">→ Convert to Invoice</button>
+            <button class="btn btn-success" onclick="updateQuoteStatus('${id}','accepted');closeViewModal()">✓ Mark Accepted</button>
+            <button class="btn btn-danger" onclick="updateQuoteStatus('${id}','declined');closeViewModal()">✗ Mark Declined</button>
+        </div>` : '';
+    const preview=document.getElementById('invoice-preview');
+    if(!preview) return;
+    preview.innerHTML=`<div style="padding:20px">
+        <h2 style="margin-bottom:4px">QUOTE — ${escapeHtml(quote.number)}</h2>
+        <p style="color:var(--text-muted)">Status: <strong>${quote.status}</strong> · Valid until: ${formatDate(quote.validUntil)}</p>
+        <p><strong>${escapeHtml(quote.customerName)}</strong>${quote.customerEmail?`<br>${escapeHtml(quote.customerEmail)}`:''}</p>
+        <table class="invoice-table" style="margin-top:16px">
+            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+            <tbody>${quote.items.map(i=>`<tr><td>${escapeHtml(i.description)}</td><td>${i.quantity}</td><td>${formatCurrency(i.price)}</td><td>${formatCurrency(i.total)}</td></tr>`).join('')}</tbody>
+        </table>
+        <div style="text-align:right;margin-top:12px">
+            <div>Subtotal: ${formatCurrency(quote.subtotal)}</div>
+            <div>Tax: ${formatCurrency(quote.tax)}</div>
+            <div style="font-size:18px;font-weight:700;margin-top:4px">Total: ${formatCurrency(quote.total)}</div>
+        </div>
+        ${quote.notes?`<p style="margin-top:12px;color:var(--text-muted)">${escapeHtml(quote.notes)}</p>`:''}
+        ${actions}
+    </div>`;
+    document.getElementById('view-modal').classList.add('active');
+}
+
+function updateQuoteStatus(id, status) {
+    const quotes=getQuotes();
+    const q=quotes.find(q=>q.id===id);
+    if(q) { q.status=status; saveQuotes(quotes); loadQuotes(); showToast(`Quote marked as ${status}.`); }
+}
+
+function deleteQuote(id) {
+    if(!confirm('Delete this quote?')) return;
+    saveQuotes(getQuotes().filter(q=>q.id!==id)); loadQuotes(); showToast('Quote deleted.');
+}
+
+function convertQuoteToInvoice(quoteId) {
+    const quote=getQuotes().find(q=>q.id===quoteId);
+    if(!quote) return;
+    if(!checkInvoiceTrialLimit()) return;
+    const settings=getSettings(); const taxRate=(settings.taxRate||0)/100;
+    const subtotal=quote.items.reduce((s,i)=>s+i.total,0);
+    const tax=subtotal*taxRate;
+    const dueDate=new Date(); dueDate.setDate(dueDate.getDate()+30);
+    const invoice={
+        id: generateId(), number: commitNextInvoiceNumber(), status:'pending',
+        date: today(), dueDate: dueDate.toISOString().split('T')[0],
+        customerName: quote.customerName, customerEmail: quote.customerEmail||'',
+        customerPhone: quote.customerPhone||'', customerAddress:'',
+        items: quote.items, subtotal, tax, total: subtotal+tax,
+        notes: quote.notes||'', convertedFromQuote: quoteId,
+        createdBy: getSession()?.username||'owner',
+        createdByRole: getSession()?.role||'owner',
+        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    };
+    const invoices=getInvoices(); invoices.push(invoice);
+    if(saveInvoices(invoices)) {
+        updateQuoteStatus(quoteId,'accepted');
+        showToast('Quote converted to invoice!');
+        navigateToPage('invoices');
+    }
+}
+
+
 let _selectedUserId = null;
 
 function selectUserCard(userId, username) {
@@ -609,6 +1155,10 @@ function applyRolePermissions(role) {
     document.querySelectorAll('.owner-only').forEach(el => {
         el.style.display = isOwner ? '' : 'none';
     });
+    // Show Business Tools nav section for team/business tiers
+    const teamFeatureEls = document.querySelectorAll('.team-feature');
+    const showFeatures = canUseInventory(); // team or business
+    teamFeatureEls.forEach(el => { el.style.display = showFeatures ? '' : 'none'; });
 }
 
 function updateSidebarUser() {
@@ -807,7 +1357,7 @@ function setupNavigation() {
 function navigateToPage(pageName) {
     // Block cashiers from restricted pages
     const session = getSession();
-    const restrictedPages = ['customers', 'reports', 'settings'];
+    const restrictedPages = ['customers', 'reports', 'settings', 'expenses'];
     if (session && session.role === 'cashier' && restrictedPages.includes(pageName)) {
         showToast('Access restricted to owner only.', 'error');
         return;
@@ -827,6 +1377,9 @@ function navigateToPage(pageName) {
     else if (pageName === 'customers') loadCustomers();
     else if (pageName === 'reports') loadReports();
     else if (pageName === 'settings') loadUsersManagementList();
+    else if (pageName === 'inventory') loadInventory();
+    else if (pageName === 'expenses') loadExpenses();
+    else if (pageName === 'quotes') loadQuotes();
 }
 
 // ==================== EVENT LISTENERS ====================
@@ -850,6 +1403,17 @@ function setupEventListeners() {
     customerNameInput.addEventListener('input', function () {
         showCustomerSuggestions(this.value);
     });
+
+    // Quote items live calculation
+    const quoteItemsContainer = document.getElementById('quote-items-container');
+    if (quoteItemsContainer) {
+        quoteItemsContainer.addEventListener('input', function(e) {
+            if (e.target.classList.contains('item-quantity') || e.target.classList.contains('item-price')) {
+                calculateItemTotal(e.target.closest('.item-row'));
+                calculateQuoteTotal();
+            }
+        });
+    }
 
     // Email settings toggle
     const emailToggle = document.getElementById('collect-emails-toggle');
@@ -1204,7 +1768,61 @@ function updateDashboard() {
     document.getElementById('pending-invoices').textContent = pendingCount;
     document.getElementById('overdue-invoices').textContent = overdueCount;
 
+    // Extra dashboard widgets for team/business tiers
+    updateDashboardExtras(invoices);
+
     loadInvoices();
+}
+
+function updateDashboardExtras(invoices) {
+    const extrasEl = document.getElementById('dashboard-extras');
+    if (!extrasEl) return;
+    if (!canUseInventory()) { extrasEl.innerHTML = ''; return; }
+
+    // Net profit = revenue - expenses
+    const paidRevenue = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+i.total,0);
+    const expenses = getExpenses();
+    const now = new Date();
+    const monthExpenses = expenses.filter(e=>{
+        const d=new Date(e.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    }).reduce((s,e)=>s+e.amount,0);
+    const monthRevenue = invoices.filter(i=>{
+        const d=new Date(i.date); return i.status==='paid'&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    }).reduce((s,i)=>s+i.total,0);
+    const monthProfit = monthRevenue - monthExpenses;
+
+    // Low stock alerts
+    const products = getProducts();
+    const lowStock = products.filter(p=>p.trackStock&&p.stockQty<=p.lowStockAlert);
+
+    // Pending quotes
+    const quotes = getQuotes();
+    const pendingQuotes = quotes.filter(q=>q.status==='pending');
+    const pipelineValue = pendingQuotes.reduce((s,q)=>s+q.total,0);
+
+    extrasEl.innerHTML = `
+        <div class="stats-grid dashboard-extras-grid" style="margin-top:0">
+            <div class="stat-card ${monthProfit<0?'stat-card-danger':''}">
+                <div class="stat-label">This Month Profit</div>
+                <div class="stat-value" style="${monthProfit<0?'color:var(--danger)':''}">${formatCurrency(monthProfit)}</div>
+                <div class="stat-change"><span>${formatCurrency(monthRevenue)} rev − ${formatCurrency(monthExpenses)} exp</span></div>
+            </div>
+            <div class="stat-card ${lowStock.length>0?'stat-card-warning':''}">
+                <div class="stat-label">Low Stock Items</div>
+                <div class="stat-value" style="${lowStock.length>0?'color:var(--warning,#ffaa00)':''}">${lowStock.length}</div>
+                <div class="stat-change"><span>${lowStock.length>0?'Needs restocking':'All stocked'}</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Quote Pipeline</div>
+                <div class="stat-value">${formatCurrency(pipelineValue)}</div>
+                <div class="stat-change"><span>${pendingQuotes.length} pending quote${pendingQuotes.length!==1?'s':''}</span></div>
+            </div>
+        </div>
+        ${lowStock.length>0?`<div class="low-stock-banner" style="margin-top:16px">
+            ⚠️ Low stock: ${lowStock.map(p=>`<strong>${escapeHtml(p.name)}</strong> (${p.stockQty} left)`).join(', ')}
+            &nbsp;<button class="btn btn-secondary btn-sm" onclick="navigateToPage('inventory')">View Inventory →</button>
+        </div>`:''}
+    `;
 }
 
 // ==================== INVOICE MODAL ====================
@@ -1313,6 +1931,7 @@ function saveInvoice() {
     if (saveInvoices(invoices)) {
         // Auto-sync customer to Customer Management
         syncCustomerFromInvoice({ customerName, customerAddress, customerEmail, customerPhone });
+        if (invoice.status === 'paid') deductStockForInvoice(invoice);
         closeInvoiceModal();
         loadInvoices();
         updateDashboard();
@@ -1552,8 +2171,9 @@ function addItem() {
     const row = document.createElement('div');
     row.className = 'item-row';
     row.innerHTML = `
-        <div class="form-group">
+        <div class="form-group" style="position:relative">
             <input type="text" class="form-input item-description" placeholder="Description" required>
+            ${canUseInventory() ? `<button type="button" class="product-pick-btn" onclick="showProductPicker(this.closest('.item-row'))" title="Pick from catalogue">📦</button>` : ''}
         </div>
         <div class="form-group">
             <input type="number" class="form-input item-quantity" placeholder="Qty" min="1" value="1" required>
@@ -2013,6 +2633,69 @@ function loadReports() {
     loadRevenueChart(invoices);
     loadStatusChart(invoices);
     loadTopCustomers(invoices);
+    if (canUseExpenses()) loadProfitReport(invoices);
+}
+
+function loadProfitReport(invoices) {
+    const existing = document.getElementById('profit-report-section');
+    if (existing) existing.remove();
+
+    const expenses = getExpenses();
+    const sym = getCurrencySymbol();
+
+    // Build 6-month profit/loss table
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(); d.setMonth(d.getMonth() - i);
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const label = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        const rev = invoices.filter(inv => {
+            const ik = new Date(inv.date); 
+            return inv.status==='paid' && `${ik.getFullYear()}-${String(ik.getMonth()+1).padStart(2,'0')}`===key;
+        }).reduce((s,i)=>s+i.total,0);
+        const exp = expenses.filter(e => {
+            const ek = new Date(e.date);
+            return `${ek.getFullYear()}-${String(ek.getMonth()+1).padStart(2,'0')}`===key;
+        }).reduce((s,e)=>s+e.amount,0);
+        months.push({ label, rev, exp, profit: rev-exp });
+    }
+
+    // Category breakdown
+    const byCategory = {};
+    expenses.forEach(e => { byCategory[e.category]=(byCategory[e.category]||0)+e.amount; });
+    const catRows = Object.entries(byCategory).sort((a,b)=>b[1]-a[1])
+        .map(([cat,amt])=>`<tr><td>${escapeHtml(cat)}</td><td>${formatCurrency(amt)}</td></tr>`).join('');
+
+    const totalExp = expenses.reduce((s,e)=>s+e.amount,0);
+    const totalRev = invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+i.total,0);
+
+    const section = document.createElement('div');
+    section.id = 'profit-report-section';
+    section.className = 'report-section';
+    section.innerHTML = `
+        <div class="section-header"><div class="section-title">Profit & Loss — Last 6 Months</div></div>
+        <table class="invoice-table" style="margin-bottom:24px">
+            <thead><tr><th>Month</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th></tr></thead>
+            <tbody>${months.map(m=>`<tr>
+                <td>${m.label}</td>
+                <td>${formatCurrency(m.rev)}</td>
+                <td>${formatCurrency(m.exp)}</td>
+                <td style="${m.profit<0?'color:var(--danger)':'color:var(--success,#00ba88)'}"><strong>${formatCurrency(m.profit)}</strong></td>
+            </tr>`).join('')}</tbody>
+            <tfoot><tr style="font-weight:700;border-top:2px solid var(--border-color)">
+                <td>Total</td>
+                <td>${formatCurrency(totalRev)}</td>
+                <td>${formatCurrency(totalExp)}</td>
+                <td style="${totalRev-totalExp<0?'color:var(--danger)':'color:var(--success,#00ba88)'}"><strong>${formatCurrency(totalRev-totalExp)}</strong></td>
+            </tr></tfoot>
+        </table>
+        ${catRows ? `<div class="section-header"><div class="section-title">Expenses by Category</div></div>
+        <table class="invoice-table">
+            <thead><tr><th>Category</th><th>Total Spent</th></tr></thead>
+            <tbody>${catRows}</tbody>
+        </table>` : ''}
+    `;
+    document.getElementById('reports-page').querySelector('.content').appendChild(section);
 }
 
 function loadRevenueChart(invoices) {
@@ -2177,8 +2860,11 @@ function exportData() {
         customers: getCustomers(),
         settings: getSettings(),
         logo: getLogo(),
+        products: getProducts(),
+        expenses: getExpenses(),
+        quotes: getQuotes(),
         exportDate: new Date().toISOString(),
-        version: '4.0'
+        version: '4.5'
     };
     downloadFile(JSON.stringify(data, null, 2), `invohub-backup-${today()}.json`, 'application/json');
     showToast('Backup downloaded!');
@@ -2196,6 +2882,9 @@ function importData(file) {
             if (data.customers) saveCustomers(data.customers);
             if (data.settings) saveSettingsData(data.settings);
             if (data.logo) saveLogo(data.logo);
+            if (data.products) saveProducts(data.products);
+            if (data.expenses) saveExpenses(data.expenses);
+            if (data.quotes) saveQuotes(data.quotes);
 
             // Resync the sequential counter to the highest invoice number in restored data
             if (data.invoices && data.invoices.length > 0) {
@@ -2277,23 +2966,24 @@ function downloadFile(content, filename, mimeType) {
     URL.revokeObjectURL(url);
 }
 
-function showToast(message) {
-    // Simple toast notification
+function showToast(message, type = 'success') {
+    // Simple toast notification — type: 'success' | 'error' | 'info'
     let toast = document.getElementById('toast-notification');
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'toast-notification';
         toast.style.cssText = `
             position: fixed; bottom: 80px; right: 24px; z-index: 9998;
-            background: var(--success); color: white;
             padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: opacity 0.3s; pointer-events: none;
+            transition: opacity 0.3s; pointer-events: none; color: white;
         `;
         document.body.appendChild(toast);
     }
+    const colors = { success: 'var(--success, #00ba88)', error: 'var(--danger, #ff4848)', info: '#5b6ee1' };
+    toast.style.background = colors[type] || colors.success;
     toast.textContent = message;
     toast.style.opacity = '1';
     clearTimeout(toast._timeout);
-    toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+    toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
 }
