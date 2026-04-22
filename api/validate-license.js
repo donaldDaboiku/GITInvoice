@@ -16,6 +16,11 @@ const TIER_MAP = {
   'invoHub-business': { tier: 'business', users_max: 25 },
 };
 
+// Startup check for required env vars (to avoid silent failures later)
+// misconfiguration immediately in Vercel function logs.
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+  console.error('[invohub] MISSING ENV VARS: SUPABASE_URL and/or SUPABASE_SERVICE_KEY are not set. License validation will fail.');
+}
 // ── Tiny Supabase REST helper (no SDK needed) ─────────────────────────────
 function sb(path, method = 'GET', body = null) {
   const url  = `${process.env.SUPABASE_URL}/rest/v1${path}`;

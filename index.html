@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="nav-section team-feature" id="nav-section-features">
+                <div class="nav-section team-feature" style="display:none">
                     <div class="nav-section-title">Business Tools</div>
                     <div class="nav-item owner-only" data-page="inventory">
                         <span class="nav-icon">📦</span>
@@ -185,9 +185,7 @@
                         </div>
                     </div>
 
-                    <!-- Extra stats for team/business tiers -->
-                    <div id="dashboard-extras" style="margin-bottom:8px"></div>
-
+                    <div id="dashboard-extras"></div>
                     <div class="invoice-section">
                         <div class="section-header">
                             <div class="section-title">Recent Invoices</div>
@@ -874,23 +872,23 @@
                         <label class="form-label">Cost Price</label>
                         <input type="number" class="form-input" id="product-cost-price" placeholder="0.00" step="0.01" min="0">
                     </div>
-                    <div class="form-group full-width" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-secondary);border-radius:8px">
-                        <input type="checkbox" id="product-track-stock" onchange="toggleStockFields()" style="width:18px;height:18px;cursor:pointer">
+                    <div class="form-group full-width" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-secondary,rgba(255,255,255,0.05));border-radius:8px">
+                        <input type="checkbox" id="product-track-stock" onchange="toggleStockFields()" style="width:18px;height:18px;cursor:pointer" checked>
                         <label for="product-track-stock" style="cursor:pointer;font-weight:500">Track stock quantity for this product</label>
                     </div>
                     <div id="stock-fields" class="form-group full-width" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
                         <div class="form-group">
                             <label class="form-label">Current Stock (units)</label>
-                            <input type="number" class="form-input" id="product-stock-qty" placeholder="0" min="0">
+                            <input type="number" class="form-input" id="product-stock-qty" placeholder="0" min="0" value="0">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Low Stock Alert at</label>
-                            <input type="number" class="form-input" id="product-low-stock" placeholder="5" min="0">
+                            <input type="number" class="form-input" id="product-low-stock-alert" placeholder="5" min="0" value="5">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer-row">
                 <button class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
             </div>
@@ -936,11 +934,11 @@
                     </div>
                     <div class="form-group full-width">
                         <label class="form-label">Notes</label>
-                        <textarea class="form-textarea" id="expense-notes" rows="2" placeholder="Optional notes or reference"></textarea>
+                        <textarea class="form-textarea" id="expense-notes" rows="2" placeholder="Optional reference or notes"></textarea>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer-row">
                 <button class="btn btn-secondary" onclick="closeExpenseModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveExpense()">Save Expense</button>
             </div>
@@ -958,7 +956,7 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Quote Number</label>
-                        <input type="text" class="form-input" id="quote-number" placeholder="QTE-2026-0001">
+                        <input type="text" class="form-input" id="quote-number">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Date</label>
@@ -981,11 +979,9 @@
                         <input type="tel" class="form-input" id="quote-customer-phone" placeholder="+234 800 000 0000">
                     </div>
                 </div>
-                <div class="items-header" style="margin-top:20px">
-                    <span>Line Items</span>
-                </div>
-                <div id="quote-items-container"></div>
-                <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addQuoteItem()">+ Add Item</button>
+                <div class="items-header" style="margin-top:20px"><span>Line Items</span></div>
+                <div id="quote-items-container" oninput="if(event.target.matches('.item-quantity,.item-price')){calculateItemTotal(event.target.closest('.item-row'));calculateQuoteTotal();}"></div>
+                <button type="button" class="btn btn-secondary" style="margin-top:8px;font-size:13px;padding:6px 14px" onclick="addQuoteItem()">+ Add Item</button>
                 <div class="invoice-totals" style="margin-top:16px">
                     <div class="totals-row"><span>Subtotal:</span><span id="quote-subtotal">—</span></div>
                     <div class="totals-row"><span>Tax:</span><span id="quote-tax">—</span></div>
@@ -996,7 +992,7 @@
                     <textarea class="form-textarea" id="quote-notes" rows="2" placeholder="Payment terms, validity, conditions..."></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer-row">
                 <button class="btn btn-secondary" onclick="closeQuoteModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveQuote()">Save Quote</button>
             </div>
