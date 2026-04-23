@@ -1,9 +1,8 @@
-// invoHub v4 - Complete Application with Gumroad License + PWA + Privacy
+// GIT Invoice v4 - Complete Application with Gumroad License + PWA + Privacy
 'use strict';
 
 // ==================== CONFIGURATION ====================
- const LICENSE_VALIDATE_URL = '/api/validate-license';
-const GUMROAD_URL = 'https://YOUR-STORE.gumroad.com/l/invohub';
+ const LICENSE_VALIDATE_URL = '/api/validate-license'; 
 
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
@@ -119,25 +118,25 @@ function seedDemoData(tier) {
         saveSettingsData(settings);
     }
 
-    console.log(`[invoHub] Demo data seeded for ${tier} plan (${invoices.length} invoices, ${customers.length} customers)`);
+    console.log(`[GIT Invoice] Demo data seeded for ${tier} plan (${invoices.length} invoices, ${customers.length} customers)`);
 }
 
 // ==================== STORAGE KEYS ====================
 const STORAGE_KEYS = {
-    INVOICES:         'invohub_invoices',
-    CUSTOMERS:        'invohub_customers',
-    SETTINGS:         'invohub_settings',
-    LOGO:             'invohub_logo',
-    LICENSE_KEY:      'invohub_license_key',
-    LICENSE_EMAIL:    'invohub_license_email',
-    LICENSE_DEVICES:  'invohub_license_devices',
-    DEVICE_ACTIVATED: 'invohub_device_activated',
-    PRIVACY_ACK:      'invohub_privacy_ack',
-    INVOICE_COUNTER:  'invohub_invoice_counter',
-    LICENSE_TIER:     'invohub_license_tier',
-    USERS:            'invohub_users',
-    SESSION:          'invohub_session',
-    DEVICE_ID:        'invohub_device_id',
+    INVOICES:         'GIT Invoice_invoices',
+    CUSTOMERS:        'GIT Invoice_customers',
+    SETTINGS:         'GIT Invoice_settings',
+    LOGO:             'GIT Invoice_logo',
+    LICENSE_KEY:      'GIT Invoice_license_key',
+    LICENSE_EMAIL:    'GIT Invoice_license_email',
+    LICENSE_DEVICES:  'GIT Invoice_license_devices',
+    DEVICE_ACTIVATED: 'GIT Invoice_device_activated',
+    PRIVACY_ACK:      'GIT Invoice_privacy_ack',
+    INVOICE_COUNTER:  'GIT Invoice_invoice_counter',
+    LICENSE_TIER:     'GIT Invoice_license_tier',
+    USERS:            'GIT Invoice_users',
+    SESSION:          'GIT Invoice_session',
+    DEVICE_ID:        'GIT Invoice_device_id',
 };
 
 // Returns a stable UUID for this browser/device. Generated once, stored forever.
@@ -295,7 +294,7 @@ function showPaywall(reason = 'upgrade', prefillKey = '') {
 
     if (reason === 'invoice') {
         title.textContent = "You've used all 3 free invoices";
-        sub.textContent   = "Unlock invoHub to create unlimited invoices, manage your team, and get paid faster.";
+        sub.textContent   = "Unlock GIT Invoice to create unlimited invoices, manage your team, and get paid faster.";
     } else if (reason === 'customer') {
         title.textContent = "You've used both free customer slots";
         sub.textContent   = "Upgrade to add unlimited customers and get full access to every feature.";
@@ -2732,7 +2731,7 @@ function exportReportData() {
     invoices.forEach(inv => {
         csv += `"${inv.number}","${inv.customerName}","${inv.date}","${inv.dueDate}","${inv.subtotal || 0}","${inv.tax || 0}","${inv.total}","${inv.status}"\n`;
     });
-    downloadFile(csv, `invohub-report-${today()}.csv`, 'text/csv');
+    downloadFile(csv, `GIT Invoice-report-${today()}.csv`, 'text/csv');
     showToast('Report exported!');
 }
 
@@ -2750,7 +2749,7 @@ function exportData() {
         exportDate: new Date().toISOString(),
         version: '4.5'
     };
-    downloadFile(JSON.stringify(data, null, 2), `invohub-backup-${today()}.json`, 'application/json');
+    downloadFile(JSON.stringify(data, null, 2), `GIT Invoice-backup-${today()}.json`, 'application/json');
     showToast('Backup downloaded!');
 }
 
@@ -2783,7 +2782,7 @@ function importData(file) {
             renderFooter();
             showToast('Backup restored successfully!');
         } catch (err) {
-            alert('Failed to restore backup. Please check the file is a valid invoHub backup.');
+            alert('Failed to restore backup. Please check the file is a valid GIT Invoice backup.');
         }
     };
     reader.readAsText(file);

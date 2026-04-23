@@ -1,4 +1,4 @@
--- invoHub — Supabase Database Setup
+-- GIT Invoice — Supabase Database Setup
 -- Run this once in the Supabase SQL Editor (app.supabase.com → SQL Editor)
 
 -- 1. Activations table — one row per device per license key
