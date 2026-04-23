@@ -3,6 +3,7 @@
 
 // ==================== CONFIGURATION ====================
  const LICENSE_VALIDATE_URL = '/api/validate-license';
+const GUMROAD_URL = 'https://YOUR-STORE.gumroad.com/l/invohub';
 
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
@@ -576,17 +577,8 @@ let currentProduct = null;
 function loadInventory() {
     if (!canUseInventory()) { requireTierFeature('Inventory Management'); return; }
     const products = getProducts();
-    // Guard: only count tracked products with valid numeric stockQty and lowStockAlert
-    const lowStock = products.filter(p =>
-        p.trackStock &&
-        p.stockQty !== null && p.stockQty !== undefined &&
-        p.lowStockAlert !== null && p.lowStockAlert !== undefined &&
-        Number(p.stockQty) <= Number(p.lowStockAlert)
-    );
-    const totalValue = products.reduce((s,p) => {
-        if (!p.trackStock || p.stockQty === null || p.stockQty === undefined) return s;
-        return s + (Number(p.stockQty) || 0) * (Number(p.costPrice) || 0);
-    }, 0);
+    const lowStock = products.filter(p => p.trackStock && p.stockQty <= p.lowStockAlert);
+    const totalValue = products.reduce((s,p) => s + (p.trackStock ? (p.stockQty||0)*(p.costPrice||0) : 0), 0);
     const cont = document.querySelector('#inventory-page .content');
     if (!cont) return;
     const alert = lowStock.length > 0
@@ -604,7 +596,7 @@ function loadInventory() {
             products.map(p => {
                 const st = !p.trackStock ? '<span class="inv-badge">Service</span>'
                     : p.stockQty <= 0 ? '<span class="inv-badge inv-danger">Out of stock</span>'
-                    : (p.lowStockAlert !== null && p.lowStockAlert !== undefined && Number(p.stockQty) <= Number(p.lowStockAlert)) ? '<span class="inv-badge inv-warning">Low stock</span>'
+                    : p.stockQty <= p.lowStockAlert ? '<span class="inv-badge inv-warning">Low stock</span>'
                     : '<span class="inv-badge inv-success">In stock</span>';
                 return `<tr><td><strong>${escapeHtml(p.name)}</strong>${p.description?'<br><small style="color:var(--text-muted)">'+escapeHtml(p.description)+'</small>':''}</td>
                     <td><code>${escapeHtml(p.sku||'—')}</code></td>
@@ -707,7 +699,7 @@ function renderPickerProducts(searchTerm) {
     grid.innerHTML = filtered.map(p => {
         const stockInfo = p.trackStock
             ? (p.stockQty <= 0 ? '<span class="inv-badge inv-danger">Out of stock</span>'
-               : p.stockQty <= p.lowStockAlert && p.lowStockAlert !== null ? `<span class="inv-badge inv-warning">${p.stockQty} left</span>`
+               : p.stockQty <= p.lowStockAlert ? `<span class="inv-badge inv-warning">${p.stockQty} left</span>`
                : `<span class="inv-badge inv-success">${p.stockQty} in stock</span>`)
             : '<span class="inv-badge">Service</span>';
         return `<div class="picker-product-card" onclick="selectFromCatalogue('${p.id}')">
@@ -784,42 +776,28 @@ let currentExpense = null;
 
 function loadExpenses() {
     if (!canUseExpenses()) { requireTierFeature('Expense Tracking'); return; }
-    // Sanitise: coerce amount to number, default missing fields
-    const raw = getExpenses();
-    const expenses = raw.map(e => ({
-        ...e,
-        amount: isNaN(parseFloat(e.amount)) ? 0 : parseFloat(e.amount),
-        category: (e.category && e.category !== 'undefined') ? e.category : 'Other',
-        description: e.description || '',
-        paymentMethod: e.paymentMethod || '—',
-        date: e.date || ''
-    }));
+    const expenses = getExpenses();
     const now = new Date();
-    const thisMonth = expenses.filter(e => { const d = new Date(e.date); return !isNaN(d) && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
-    const totalMonth = thisMonth.reduce((s,e) => s + e.amount, 0);
-    const totalAll = expenses.reduce((s,e) => s + e.amount, 0);
-    const byCat = {};
-    expenses.forEach(e => {
-        const cat = e.category;
-        byCat[cat] = (byCat[cat] || 0) + e.amount;
-    });
-    const topCatEntry = Object.entries(byCat).sort((a,b) => b[1]-a[1])[0];
-    const topCatLabel = topCatEntry ? topCatEntry[0] : '—';
+    const thisMonth = expenses.filter(e => { const d = new Date(e.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+    const totalMonth = thisMonth.reduce((s,e) => s+e.amount, 0);
+    const totalAll = expenses.reduce((s,e) => s+e.amount, 0);
+    const byCat = {}; expenses.forEach(e => { byCat[e.category] = (byCat[e.category]||0)+e.amount; });
+    const topCat = Object.entries(byCat).sort((a,b) => b[1]-a[1])[0];
     const cont = document.querySelector('#expenses-page .content'); if (!cont) return;
     cont.innerHTML = `
         <div class="stats-grid" style="margin-bottom:24px">
             <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value">${formatCurrency(totalMonth)}</div></div>
             <div class="stat-card"><div class="stat-label">All Time</div><div class="stat-value">${formatCurrency(totalAll)}</div></div>
-            <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:18px">${escapeHtml(topCatLabel)}</div></div>
+            <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:18px">${topCat?topCat[0]:'—'}</div></div>
         </div>
         <div class="section-header"><div class="section-title">Expense Log</div><button class="btn btn-primary" onclick="openExpenseModal()">+ Log Expense</button></div>
         ` + (expenses.length === 0
             ? `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">No expenses logged</div><div class="empty-sub">Track costs to see your real profit margins.</div><button class="btn btn-primary" onclick="openExpenseModal()">+ Log First Expense</button></div>`
             : `<table class="invoice-table"><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Paid via</th><th>Actions</th></tr></thead><tbody>` +
             expenses.sort((a,b) => new Date(b.date)-new Date(a.date)).map(e =>
-                `<tr><td>${e.date ? formatDate(e.date) : '—'}</td><td>${escapeHtml(e.description) || '<span style="color:var(--text-muted)">—</span>'}</td>
+                `<tr><td>${formatDate(e.date)}</td><td>${escapeHtml(e.description)}</td>
                 <td><span class="inv-badge">${escapeHtml(e.category)}</span></td>
-                <td><strong>${formatCurrency(e.amount)}</strong></td><td>${escapeHtml(e.paymentMethod)}</td>
+                <td><strong>${formatCurrency(e.amount)}</strong></td><td>${escapeHtml(e.paymentMethod||'—')}</td>
                 <td style="white-space:nowrap"><button class="btn btn-secondary btn-sm" onclick="openExpenseModal('${e.id}')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteExpense('${e.id}')">Delete</button></td></tr>`
             ).join('') + `</tbody></table>`);
 }
@@ -982,9 +960,7 @@ function saveQuote() {
 }
 function viewQuote(id) {
     const q = getQuotes().find(x => x.id === id); if (!q) return;
-    const preview = document.getElementById('invoice-preview-container'); if (!preview) return;
-    const titleEl = document.getElementById('view-modal-title');
-    if (titleEl) titleEl.textContent = `Quote — ${q.number}`;
+    const preview = document.getElementById('invoice-preview'); if (!preview) return;
     preview.innerHTML = `<div style="padding:20px">
         <h2>QUOTE — ${escapeHtml(q.number)}</h2>
         <p style="color:var(--text-muted)">Status: <strong>${q.status}</strong> &nbsp;·&nbsp; Valid until: ${formatDate(q.validUntil)}</p>
@@ -1002,7 +978,7 @@ function viewQuote(id) {
             <button class="btn btn-danger" onclick="updateQuoteStatus('${id}','declined');closeViewModal()">✗ Declined</button>
         </div>`:''}
     </div>`;
-    document.getElementById('view-invoice-modal').classList.add('active');
+    document.getElementById('view-modal').classList.add('active');
 }
 function updateQuoteStatus(id, status) {
     const quotes = getQuotes(); const q = quotes.find(x => x.id === id);
@@ -1770,7 +1746,7 @@ function updateDashboardExtras(invoices) {
         return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
     }).reduce((s,e) => s+e.amount, 0);
     const monthProfit = monthRevenue - monthExpenses;
-    const lowStock = getProducts().filter(p => p.trackStock && p.stockQty !== null && p.stockQty !== undefined && p.lowStockAlert !== null && p.lowStockAlert !== undefined && Number(p.stockQty) <= Number(p.lowStockAlert));
+    const lowStock = getProducts().filter(p => p.trackStock && p.stockQty <= p.lowStockAlert);
     const pendingQuotes = getQuotes().filter(q => q.status==='pending');
     const pipelineValue = pendingQuotes.reduce((s,q) => s+q.total, 0);
     el.innerHTML = `
@@ -2117,63 +2093,7 @@ function generateInvoicePreview(invoice) {
 }
 
 function printInvoice() {
-    const container = document.getElementById('invoice-preview-container');
-    if (!container) return;
-    const content = container.innerHTML;
-    const printWin = window.open('', '_blank', 'width=900,height=700');
-    printWin.document.write(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>invoHub Print</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #000; background: #fff; padding: 40px; }
-  .invoice-preview-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e0e0e0; }
-  .company-info { flex: 1; }
-  .company-logo { max-width: 200px; max-height: 80px; margin-bottom: 16px; display: block; }
-  .invoice-details { text-align: right; }
-  .invoice-preview-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-  .party-section h3 { font-size: 13px; text-transform: uppercase; color: #666; margin-bottom: 10px; letter-spacing: 0.5px; }
-  .party-details { line-height: 1.8; }
-  .invoice-preview-table { width: 100%; margin-bottom: 40px; border-collapse: collapse; }
-  .invoice-preview-table th { background: #f5f5f5; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e0e0e0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .invoice-preview-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; }
-  .invoice-preview-table tr:last-child td { border-bottom: none; }
-  .text-right { text-align: right; }
-  .invoice-preview-summary { margin-left: auto; width: 300px; }
-  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
-  .summary-row.total { font-size: 18px; font-weight: 700; border-top: 2px solid #000; padding-top: 12px; margin-top: 4px; }
-  .invoice-preview-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
-  .bank-details h3 { font-size: 13px; text-transform: uppercase; color: #666; margin-bottom: 10px; }
-  .bank-details p { margin-bottom: 4px; line-height: 1.8; }
-  h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  table.invoice-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
-  table.invoice-table th { background: #f5f5f5 !important; color: #333 !important; padding: 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e0e0e0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  table.invoice-table td { padding: 12px; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
-  img { -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; }
-  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .invoice-preview-footer { page-break-inside: avoid; break-inside: avoid; }
-  .invoice-preview-summary { page-break-inside: avoid; break-inside: avoid; }
-  .bank-details { page-break-inside: avoid; break-inside: avoid; }
-  .invoice-preview-table { page-break-inside: auto; }
-  .invoice-preview-table tr { page-break-inside: avoid; break-inside: avoid; }
-  @media print {
-    body { padding: 20px; margin: 0; }
-    img { -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; }
-    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; color-adjust: exact; }
-    .invoice-preview-footer { page-break-inside: avoid; break-inside: avoid; }
-    .invoice-preview-summary { page-break-inside: avoid; break-inside: avoid; }
-    .bank-details { page-break-inside: avoid; break-inside: avoid; }
-    .invoice-preview-table tr { page-break-inside: avoid; break-inside: avoid; }
-  }
-</style>
-</head>
-<body>${content}</body>
-</html>`);
-    printWin.document.close();
-    printWin.focus();
-    setTimeout(() => { printWin.print(); printWin.close(); }, 400);
+    window.print();
 }
 
 // ==================== ITEMS ====================

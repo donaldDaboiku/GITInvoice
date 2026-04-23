@@ -615,7 +615,14 @@
                                 <button type="button" class="remove-item-btn" onclick="removeItem(this)" style="visibility:hidden;">×</button>
                             </div>
                         </div>
-                        <button type="button" class="add-item-btn" onclick="addItem()">+ Add Item</button>
+                        <div class="item-add-actions">
+                            <button type="button" class="btn-add-catalogue" onclick="openCataloguePicker('invoice')" id="btn-catalogue-invoice">
+                                <span>📦</span> Pick from catalogue
+                            </button>
+                            <button type="button" class="btn-add-custom" onclick="addItem()">
+                                <span>+</span> Add custom item
+                            </button>
+                        </div>
                     </div>
 
                     <div class="invoice-summary">
@@ -843,6 +850,32 @@
     </div>
 
 
+
+    <!-- ==================== CATALOGUE PICKER MODAL ==================== -->
+    <div id="catalogue-picker-modal" class="modal-overlay">
+        <div class="modal-sheet" style="max-width:680px">
+            <div class="modal-header">
+                <div class="modal-title">Pick from Catalogue</div>
+                <button class="modal-close" onclick="closeCataloguePicker()">×</button>
+            </div>
+            <div class="modal-body" style="padding-top:16px">
+                <input
+                    type="text"
+                    id="catalogue-picker-search"
+                    class="form-input"
+                    placeholder="Search by name or SKU..."
+                    style="margin-bottom:16px"
+                    oninput="renderPickerProducts(this.value)"
+                >
+                <div id="catalogue-picker-grid" class="catalogue-picker-grid"></div>
+            </div>
+            <div class="modal-footer-row" style="justify-content:space-between;align-items:center">
+                <span style="font-size:13px;color:var(--text-muted)">Can't find it? Use <strong>+ Add custom item</strong> instead.</span>
+                <button class="btn btn-secondary" onclick="closeCataloguePicker()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ==================== PRODUCT MODAL ==================== -->
     <div id="product-modal" class="modal-overlay">
         <div class="modal-sheet" style="max-width:560px">
@@ -981,7 +1014,14 @@
                 </div>
                 <div class="items-header" style="margin-top:20px"><span>Line Items</span></div>
                 <div id="quote-items-container" oninput="if(event.target.matches('.item-quantity,.item-price')){calculateItemTotal(event.target.closest('.item-row'));calculateQuoteTotal();}"></div>
-                <button type="button" class="btn btn-secondary" style="margin-top:8px;font-size:13px;padding:6px 14px" onclick="addQuoteItem()">+ Add Item</button>
+                <div class="item-add-actions" style="margin-top:8px">
+                    <button type="button" class="btn-add-catalogue" onclick="openCataloguePicker('quote')" id="btn-catalogue-quote">
+                        <span>📦</span> Pick from catalogue
+                    </button>
+                    <button type="button" class="btn-add-custom" onclick="addQuoteItem()">
+                        <span>+</span> Add custom item
+                    </button>
+                </div>
                 <div class="invoice-totals" style="margin-top:16px">
                     <div class="totals-row"><span>Subtotal:</span><span id="quote-subtotal">—</span></div>
                     <div class="totals-row"><span>Tax:</span><span id="quote-tax">—</span></div>
