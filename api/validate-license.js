@@ -11,9 +11,9 @@ export const config = { runtime: 'nodejs' };
 
 // ── Gumroad product permalinks → tier config ──────────────────────────────
 const TIER_MAP = {
-  'GIT Invoice-solo':     { tier: 'solo',     users_max: 1  },
-  'GIT Invoice-team':     { tier: 'team',     users_max: 10 },
-  'GIT Invoice-business': { tier: 'business', users_max: 25 },
+  'GITInvoice-solo':     { tier: 'solo',     users_max: 1  },
+  'GITInvoice-team':     { tier: 'team',     users_max: 10 },
+  'GITInvoice-business': { tier: 'business', users_max: 25 },
 };
 
 // Startup check for required env vars (to avoid silent failures later)
