@@ -2796,7 +2796,27 @@ function generateId() {
 
 function formatDate(dateString) {
     if (!dateString) return '—';
-    const date = new Date(dateString + 'T00:00:00'); // avoid timezone shifts
+    let date;
+    if (dateString instanceof Date) {
+        date = new Date(dateString.getTime());
+    } else if (typeof dateString === 'string') {
+        const value = dateString.trim();
+        if (!value) return '—';
+
+        // Preserve plain YYYY-MM-DD values as local dates, but allow ISO timestamps too.
+        const plainDateMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (plainDateMatch) {
+            const [, year, month, day] = plainDateMatch;
+            date = new Date(Number(year), Number(month) - 1, Number(day));
+        } else {
+            date = new Date(value);
+        }
+    } else {
+        date = new Date(dateString);
+    }
+
+    if (Number.isNaN(date.getTime())) return '—';
+
     const settings = getSettings();
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
