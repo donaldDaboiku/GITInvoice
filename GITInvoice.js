@@ -1996,6 +1996,10 @@ function generateInvoicePreview(invoice) {
     const isPaid = invoice.status === 'paid';
     const docType = isPaid ? 'RECEIPT' : 'INVOICE';
     const docTitle = isPaid ? 'Payment Receipt' : 'Invoice';
+    const items = Array.isArray(invoice.items) ? invoice.items : [];
+    const invoiceNumber = invoice.number || '—';
+    const customerName = invoice.customerName || 'Walk-in Customer';
+    const taxRate = Number(settings.taxRate) || 0;
 
     const html = `
         <div class="invoice-preview-header">
@@ -2008,7 +2012,7 @@ function generateInvoicePreview(invoice) {
             </div>
             <div class="invoice-details">
                 <div style="font-size:24px;font-weight:700;color:${isPaid ? '#00ba88' : '#000'}">${docType}</div>
-                <div style="font-size:18px;font-weight:700;margin-bottom:16px;">${escapeHtml(invoice.number)}</div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:16px;">${escapeHtml(invoiceNumber)}</div>
                 ${isPaid ? `<p style="color:#00ba88;font-weight:600;">✓ PAID</p>` : ''}
                 <p><strong>Date:</strong> ${formatDate(invoice.date)}</p>
                 ${!isPaid ? `<p><strong>Due:</strong> ${formatDate(invoice.dueDate)}</p>` : ''}
@@ -2019,7 +2023,7 @@ function generateInvoicePreview(invoice) {
             <div class="party-section">
                 <h3>${isPaid ? 'Received From:' : 'Bill To:'}</h3>
                 <div class="party-details">
-                    <strong>${escapeHtml(invoice.customerName)}</strong><br>
+                    <strong>${escapeHtml(customerName)}</strong><br>
                     ${invoice.customerAddress ? escapeHtml(invoice.customerAddress).replace(/\n/g, '<br>') + '<br>' : ''}
                     ${invoice.customerEmail ? `Email: ${escapeHtml(invoice.customerEmail)}<br>` : ''}
                     ${invoice.customerPhone ? `Phone: ${escapeHtml(invoice.customerPhone)}` : ''}
@@ -2048,10 +2052,10 @@ function generateInvoicePreview(invoice) {
                 </tr>
             </thead>
             <tbody>
-                ${invoice.items.map(item => `
+                ${items.map(item => `
                     <tr>
-                        <td>${escapeHtml(item.description)}</td>
-                        <td class="text-right">${item.quantity}</td>
+                        <td>${escapeHtml(item.description || 'Item')}</td>
+                        <td class="text-right">${Number(item.quantity) || 0}</td>
                         <td class="text-right">${formatCurrency(item.price)}</td>
                         <td class="text-right">${formatCurrency(item.total)}</td>
                     </tr>`).join('')}
@@ -2060,7 +2064,7 @@ function generateInvoicePreview(invoice) {
 
         <div class="invoice-preview-summary">
             <div class="summary-row" style="color:#000;"><span>Subtotal:</span><span>${formatCurrency(invoice.subtotal)}</span></div>
-            <div class="summary-row" style="color:#000;"><span>Tax (${settings.taxRate || 0}%):</span><span>${formatCurrency(invoice.tax)}</span></div>
+            <div class="summary-row" style="color:#000;"><span>Tax (${taxRate}%):</span><span>${formatCurrency(invoice.tax)}</span></div>
             <div class="summary-row total" style="color:#000;">
                 <span>${isPaid ? 'Amount Paid:' : 'Total Due:'}</span>
                 <span>${formatCurrency(invoice.total)}</span>
@@ -2085,6 +2089,8 @@ function generateInvoicePreview(invoice) {
                     ${settings.iban ? `<p><strong>IBAN:</strong> ${escapeHtml(settings.iban)}</p>` : ''}
                 </div>
             </div>` : ''}
+
+        <div class="invoice-print-reference">Reference: gitsystem</div>
     `;
 
     document.getElementById('invoice-preview-container').innerHTML = html;
