@@ -1228,7 +1228,8 @@ function saveQuote() {
 }
 function viewQuote(id) {
     const q = getQuotes().find(x => x.id === id); if (!q) return;
-    const preview = document.getElementById('invoice-preview'); if (!preview) return;
+    currentViewInvoice = null;
+    const preview = document.getElementById('invoice-preview-container'); if (!preview) return;
     preview.innerHTML = `<div style="padding:20px">
         <h2>QUOTE — ${escapeHtml(q.number)}</h2>
         <p style="color:var(--text-muted)">Status: <strong>${q.status}</strong> &nbsp;·&nbsp; Valid until: ${formatDate(q.validUntil)}</p>
@@ -1246,7 +1247,10 @@ function viewQuote(id) {
             <button class="btn btn-danger" onclick="updateQuoteStatus('${id}','declined');closeViewModal()">✗ Declined</button>
         </div>`:''}
     </div>`;
-    document.getElementById('view-modal').classList.add('active');
+    document.getElementById('view-modal-title').textContent = 'Quote Details';
+    const editBtn = document.getElementById('view-modal-edit-btn');
+    if (editBtn) editBtn.style.display = 'none';
+    document.getElementById('view-invoice-modal').classList.add('active');
 }
 function updateQuoteStatus(id, status) {
     const quotes = getQuotes(); const q = quotes.find(x => x.id === id);
@@ -2242,6 +2246,8 @@ function viewInvoice(id) {
 
     currentViewInvoice = invoice;
     generateInvoicePreview(invoice);
+    const editBtn = document.getElementById('view-modal-edit-btn');
+    if (editBtn) editBtn.style.display = '';
     document.getElementById('view-invoice-modal').classList.add('active');
 }
 
