@@ -7,7 +7,7 @@
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
 // IMPORTANT: Set back to false before deploying to production.
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 // ==================== DEMO DATA ====================
 // Seeded automatically on first boot after license activation.
