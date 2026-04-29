@@ -156,6 +156,11 @@
                         <span>Dashboard</span>
                         <span class="cashier-header-badge" id="cashier-header-badge" style="display:none;"></span>
                     </div>
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div class="notif-bell-wrap" onclick="toggleNotifPanel()">
+                            <button class="notif-bell-btn" id="notif-bell" title="Notifications">🔔</button>
+                            <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+                    </div>
                     <button class="btn btn-primary" onclick="openInvoiceModal()">
                         <span>+</span>
                         <span>New Invoice</span>
@@ -348,6 +353,14 @@
                         <div style="display: flex; gap: 12px;">
                             <button class="btn btn-secondary" onclick="copyLicenseKey()">📋 Copy License Key</button>
                             <button class="btn btn-danger" onclick="deactivateLicense()">🔓 Deactivate This Device</button>
+                        </div>
+                    </div>
+                    <!-- API Access (Business only) -->
+                    <div class="settings-section">
+                        <div class="settings-title">🔌 API Access <span style="font-size:11px;background:var(--primary,#ff6b35);color:#fff;border-radius:4px;padding:2px 6px;margin-left:6px;vertical-align:middle">Business</span></div>
+                        <div class="settings-subtitle">Connect invoHub to external tools using your API key</div>
+                        <div id="api-key-section">
+                            <div class="tier-locked-banner">🔒 API Access is available on the <strong>Business plan</strong>. <button class="btn btn-primary btn-sm" onclick="switchPlan()" style="margin-left:12px">Upgrade →</button></div>
                         </div>
                     </div>
 
@@ -800,7 +813,7 @@
                     <div class="ptier-name">Solo</div>
                     <div class="ptier-seats">1 user</div>
                     <div class="ptier-cta">Buy →</div>
-                     <div class="ptier-price">$25</div>
+                     <div class="ptier-price">$29</div>
                 </a>
                 <a href="https://gitsystem.gumroad.com/l/GITInvoice-team" target="_blank" class="paywall-tier-card ptier-featured">
                     <div class="ptier-badge">Most Popular</div>
@@ -808,14 +821,14 @@
                     <div class="ptier-name">Team</div>
                     <div class="ptier-seats">10 users</div>
                     <div class="ptier-cta">Buy →</div>
-                    <div class="ptier-price">$18</div>
+                    <div class="ptier-price">$19</div>
                 </a>
                 <a href="https://gitsystem.gumroad.com/l/GITInvoice-business" target="_blank" class="paywall-tier-card">
                     <div class="ptier-icon">🏢</div>
                     <div class="ptier-name">Business</div>
                     <div class="ptier-seats">25 users</div>
                     <div class="ptier-cta">Buy →</div>
-                     <div class="ptier-price">$35</div>
+                     <div class="ptier-price">$39</div>
                 </a>
             </div>
 
@@ -845,6 +858,59 @@
             <div class="license-privacy-note" style="margin-top:16px;">
                 <span>🔒</span>
                 <span>One-time purchase. No subscriptions. Your data <strong>never leaves this device</strong>.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== NOTIFICATION PANEL ==================== -->
+    <div id="notif-panel" class="notif-panel"></div>
+    <div id="notif-overlay" class="notif-overlay" onclick="closeNotifPanel()"></div>
+
+    <!-- ==================== FEEDBACK SURVEY MODAL ==================== -->
+    <div id="survey-modal" class="modal-overlay">
+        <div class="modal-sheet" style="max-width:480px">
+            <div class="modal-header">
+                <div class="modal-title">How are we doing? 👋</div>
+                <button class="modal-close" onclick="closeSurveyModal(true)">×</button>
+            </div>
+            <div id="survey-form" class="modal-body">
+                <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">
+                    You've created a few invoices — we'd love 60 seconds of your honest feedback.
+                </p>
+                <div class="form-group">
+                    <label class="form-label">How would you rate invoHub overall?</label>
+                    <div class="star-rating">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:16px">
+                    <label class="form-label">Would you recommend invoHub to others?</label>
+                    <select class="form-select" id="survey-recommend">
+                        <option value="">Select one...</option>
+                        <option value="definitely">Definitely yes</option>
+                        <option value="probably">Probably yes</option>
+                        <option value="not-sure">Not sure</option>
+                        <option value="probably-not">Probably not</option>
+                        <option value="definitely-not">Definitely not</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top:16px">
+                    <label class="form-label">Anything we can improve? (optional)</label>
+                    <textarea class="form-textarea" id="survey-feedback" rows="3" placeholder="Tell us what's missing or what you love..."></textarea>
+                </div>
+                <div class="modal-footer-row" style="margin-top:20px;padding:0">
+                    <button class="btn btn-secondary" onclick="closeSurveyModal(true)">Skip forever</button>
+                    <button class="btn btn-primary" id="survey-submit-btn" onclick="submitSurvey()">Submit Feedback</button>
+                </div>
+            </div>
+            <div id="survey-thankyou" class="modal-body" style="display:none;text-align:center;padding:40px">
+                <div style="font-size:40px;margin-bottom:12px">🙏</div>
+                <h3 style="margin-bottom:8px">Thank you!</h3>
+                <p style="color:var(--text-muted);font-size:14px">Your feedback helps us build a better invoHub.</p>
             </div>
         </div>
     </div>

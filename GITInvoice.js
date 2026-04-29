@@ -7,7 +7,7 @@
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
 // IMPORTANT: Set back to false before deploying to production.
-const DEV_MODE = false;
+const DEV_MODE = true;
 
 // ==================== DEMO DATA ====================
 // Seeded automatically on first boot after license activation.
@@ -565,6 +565,275 @@ function canUseQuotes()    { const t = getTier(); return t === 'team' || t === '
 function requireTierFeature(name) {
     showToast(name + ' is available on Team & Business plans.', 'info');
     showPaywall('upgrade');
+}
+
+// ==================== TEAM vs BUSINESS FEATURE GATES ====================
+function canUseAPI()        { return getTier() === 'business'; }
+function canUseMultiBranch(){ return getTier() === 'business'; }
+function canUseFullStockHistory() { return getTier() === 'business'; }
+
+// ==================== PLAN SWITCHING ====================
+async function switchPlan() {
+    const key = localStorage.getItem(STORAGE_KEYS.LICENSE_KEY);
+    if (!confirm('Switching plan will deactivate your current license on this device. Your data stays intact. Continue?')) return;
+    // Deactivate current key server-side
+    if (key) {
+        try {
+            await fetch(LICENSE_VALIDATE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ license_key: key, action: 'deactivate', device_id: getDeviceId() })
+            });
+        } catch(e) { console.warn('Server deactivation failed, continuing locally'); }
+    }
+    // Clear license keys but keep all data
+    localStorage.removeItem(STORAGE_KEYS.LICENSE_KEY);
+    localStorage.removeItem(STORAGE_KEYS.LICENSE_EMAIL);
+    localStorage.removeItem(STORAGE_KEYS.DEVICE_ACTIVATED);
+    localStorage.removeItem(STORAGE_KEYS.LICENSE_DEVICES);
+    localStorage.removeItem(STORAGE_KEYS.LICENSE_TIER);
+    localStorage.removeItem(STORAGE_KEYS.API_KEY);
+    showToast('License cleared. Enter your new plan key.', 'info');
+    showPaywall('upgrade');
+}
+
+// ==================== API KEY (BUSINESS ONLY) ====================
+function generateApiKey() {
+    if (!canUseAPI()) { requireTierFeature('API Access'); return; }
+    const licenseKey = localStorage.getItem(STORAGE_KEYS.LICENSE_KEY) || '';
+    // API key = license key itself (validated server-side via Supabase)
+    // Store it visibly so the user can copy it
+    localStorage.setItem(STORAGE_KEYS.API_KEY, licenseKey);
+    renderApiKeySection();
+    showToast('API key ready! Use your license key as the API key.', 'success');
+}
+
+function renderApiKeySection() {
+    const el = document.getElementById('api-key-section');
+    if (!el) return;
+    if (!canUseAPI()) {
+        el.innerHTML = `<div class="tier-locked-banner">
+            🔒 API Access is available on the <strong>Business plan</strong>.
+            <button class="btn btn-primary btn-sm" onclick="switchPlan()" style="margin-left:12px">Upgrade →</button>
+        </div>`;
+        return;
+    }
+    const apiKey = localStorage.getItem(STORAGE_KEYS.API_KEY) || localStorage.getItem(STORAGE_KEYS.LICENSE_KEY) || '—';
+    el.innerHTML = `
+        <div class="api-key-display">
+            <code id="api-key-value">${apiKey}</code>
+            <button class="btn btn-secondary btn-sm" onclick="copyApiKey()">Copy</button>
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:var(--text-muted)">
+            Use this key in the <code>X-API-Key</code> header to access your data programmatically.
+        </div>
+        <div class="api-endpoints-box">
+            <div class="api-endpoint"><span class="api-method">GET</span><code>/api/external/invoices</code></div>
+            <div class="api-endpoint"><span class="api-method">GET</span><code>/api/external/customers</code></div>
+            <div class="api-endpoint"><span class="api-method">GET</span><code>/api/external/products</code></div>
+        </div>`;
+}
+
+function copyApiKey() {
+    const key = document.getElementById('api-key-value')?.textContent;
+    if (key && key !== '—') {
+        navigator.clipboard.writeText(key).then(() => showToast('API key copied!'));
+    }
+}
+
+// ==================== FEATURE 3: FEEDBACK SURVEY ====================
+function trackInvoiceSave() {
+    if (localStorage.getItem(STORAGE_KEYS.SURVEY_DONE)) return;
+    const count = parseInt(localStorage.getItem(STORAGE_KEYS.SURVEY_USAGE) || '0') + 1;
+    localStorage.setItem(STORAGE_KEYS.SURVEY_USAGE, count);
+    if (count >= SURVEY_TRIGGER_COUNT) {
+        setTimeout(() => openSurveyModal(), 1500); // slight delay so invoice saves first
+    }
+}
+
+function openSurveyModal() {
+    if (localStorage.getItem(STORAGE_KEYS.SURVEY_DONE)) return;
+    const m = document.getElementById('survey-modal');
+    if (m) m.classList.add('active');
+}
+
+function closeSurveyModal(skipForever = false) {
+    const m = document.getElementById('survey-modal');
+    if (m) m.classList.remove('active');
+    if (skipForever) localStorage.setItem(STORAGE_KEYS.SURVEY_DONE, 'true');
+}
+
+async function submitSurvey() {
+    const rating    = document.querySelector('.star-rating .star.selected')?.dataset.value || '';
+    const recommend = document.getElementById('survey-recommend')?.value || '';
+    const feedback  = document.getElementById('survey-feedback')?.value?.trim() || '';
+
+    if (!rating) { showToast('Please select a star rating.', 'error'); return; }
+
+    const btn = document.getElementById('survey-submit-btn');
+    btn.disabled = true; btn.textContent = 'Sending...';
+
+    try {
+        // POST to a Tally form (replace YOUR_TALLY_ID with your actual Tally form ID)
+        // Tally gives you a free embeddable form — sign up at tally.so
+        const TALLY_ENDPOINT = 'https://tally.so/r/YOUR_TALLY_ID';
+        const tier = getTier();
+        const payload = { rating, recommend, feedback, tier, version: APP_VERSION };
+
+        // Try Tally first, fall back to a mailto link
+        try {
+            await fetch(TALLY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch(e) {
+            // Fallback: open mailto
+            const body = encodeURIComponent(`Rating: ${rating}/5\nRecommend: ${recommend}\nFeedback: ${feedback}\nTier: ${tier}`);
+            window.open('mailto:support@yourdomain.com?subject=invoHub Feedback&body=' + body);
+        }
+    } catch(e) { console.warn('Survey submission error:', e); }
+
+    // Mark done regardless
+    localStorage.setItem(STORAGE_KEYS.SURVEY_DONE, 'true');
+    document.getElementById('survey-form').style.display = 'none';
+    document.getElementById('survey-thankyou').style.display = 'block';
+    setTimeout(() => closeSurveyModal(), 2500);
+}
+
+function initStarRating() {
+    const stars = document.querySelectorAll('.star-rating .star');
+    stars.forEach(star => {
+        star.addEventListener('mouseenter', () => {
+            const val = parseInt(star.dataset.value);
+            stars.forEach(s => s.classList.toggle('hovered', parseInt(s.dataset.value) <= val));
+        });
+        star.addEventListener('mouseleave', () => {
+            stars.forEach(s => s.classList.remove('hovered'));
+        });
+        star.addEventListener('click', () => {
+            const val = parseInt(star.dataset.value);
+            stars.forEach(s => s.classList.toggle('selected', parseInt(s.dataset.value) <= val));
+        });
+    });
+}
+
+// ==================== FEATURE 4: IN-APP NOTIFICATIONS ====================
+const NOTIFICATIONS = [
+    {
+        id: 'v45-new-features',
+        type: 'update',
+        title: "What's new in v4.5",
+        message: 'Inventory management, expense tracking, quotes, and a product catalogue picker are now live.',
+        action: null,
+        version: '4.5.0'
+    },
+    {
+        id: 'api-business-launch',
+        type: 'feature',
+        title: 'Business API now available',
+        message: 'Business plan users can now access their data via REST API. Connect to Zapier, Google Sheets, and more.',
+        action: null,
+        tierRequired: 'business'
+    }
+];
+
+function getNotifsDismissed() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTIF_DISMISSED) || '[]'); } catch(e) { return []; }
+}
+function dismissNotif(id) {
+    const dismissed = getNotifsDismissed();
+    if (!dismissed.includes(id)) dismissed.push(id);
+    localStorage.setItem(STORAGE_KEYS.NOTIF_DISMISSED, JSON.stringify(dismissed));
+    renderNotificationBell();
+    const el = document.getElementById('notif-' + id);
+    if (el) el.remove();
+}
+function dismissAllNotifs() {
+    const ids = NOTIFICATIONS.map(n => n.id);
+    localStorage.setItem(STORAGE_KEYS.NOTIF_DISMISSED, JSON.stringify(ids));
+    renderNotificationBell();
+    closeNotifPanel();
+}
+
+function getActiveNotifs() {
+    const dismissed = getNotifsDismissed();
+    const tier = getTier();
+    return NOTIFICATIONS.filter(n => {
+        if (dismissed.includes(n.id)) return false;
+        if (n.tierRequired && n.tierRequired !== tier) return false;
+        return true;
+    });
+}
+
+function renderNotificationBell() {
+    const bell = document.getElementById('notif-bell');
+    const badge = document.getElementById('notif-badge');
+    if (!bell) return;
+    const count = getActiveNotifs().length + getRenewalNotifs().length;
+    if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+}
+
+function getRenewalNotifs() {
+    const activatedAt = localStorage.getItem(STORAGE_KEYS.ACTIVATED_AT);
+    if (!activatedAt || !isLicensed()) return [];
+    const daysSince = (Date.now() - new Date(activatedAt)) / 86_400_000;
+    // Remind after 11 months (330 days) and again after 13 months
+    if (daysSince > 330) return [{ id: 'renewal', type: 'renewal', title: 'License renewal', message: 'Your license is over a year old. Check for major updates or new plans on Gumroad.', action: 'openRenewal' }];
+    return [];
+}
+
+function toggleNotifPanel() {
+    const panel = document.getElementById('notif-panel');
+    if (!panel) return;
+    const isOpen = panel.classList.contains('active');
+    if (isOpen) { closeNotifPanel(); return; }
+    renderNotifPanel();
+    panel.classList.add('active');
+}
+function closeNotifPanel() {
+    document.getElementById('notif-panel')?.classList.remove('active');
+}
+function openRenewal() {
+    window.open('https://gitsystem.gumroad.com', '_blank');
+    dismissNotif('renewal');
+}
+
+function renderNotifPanel() {
+    const panel = document.getElementById('notif-panel');
+    if (!panel) return;
+    const notifs = [...getActiveNotifs(), ...getRenewalNotifs()];
+    if (notifs.length === 0) {
+        panel.innerHTML = `<div class="notif-header"><strong>Notifications</strong><button class="modal-close" onclick="closeNotifPanel()">×</button></div>
+            <div class="notif-empty">You're all caught up ✓</div>`;
+        return;
+    }
+    const icons = { update: '🆕', feature: '✨', renewal: '🔔', info: 'ℹ️' };
+    panel.innerHTML = `<div class="notif-header">
+        <strong>Notifications</strong>
+        <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-secondary btn-sm" onclick="dismissAllNotifs()">Clear all</button>
+            <button class="modal-close" onclick="closeNotifPanel()">×</button>
+        </div>
+    </div>` + notifs.map(n => `
+        <div class="notif-item" id="notif-${n.id}">
+            <div class="notif-icon">${icons[n.type]||'ℹ️'}</div>
+            <div class="notif-body">
+                <div class="notif-title">${escapeHtml(n.title)}</div>
+                <div class="notif-msg">${escapeHtml(n.message)}</div>
+                ${n.action ? `<button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="${n.action}()">${n.action==='openRenewal'?'View on Gumroad →':'Learn more'}</button>` : ''}
+            </div>
+            <button class="notif-dismiss" onclick="dismissNotif('${n.id}')" title="Dismiss">×</button>
+        </div>`).join('');
+}
+
+function checkAndShowVersionNotif() {
+    const lastSeen = localStorage.getItem(STORAGE_KEYS.APP_VERSION);
+    if (lastSeen !== APP_VERSION) {
+        localStorage.setItem(STORAGE_KEYS.APP_VERSION, APP_VERSION);
+        // Don't auto-dismiss version notifs — user dismisses manually
+    }
+    renderNotificationBell();
 }
 
 // ==================== PRODUCTS / INVENTORY ====================
