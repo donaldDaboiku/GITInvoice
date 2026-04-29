@@ -1,10 +1,10 @@
 // InvoicePro Service Worker - PWA Offline Support
-const CACHE_NAME = 'GIT Invoice-v4.3.0';
+const CACHE_NAME = 'GIT Invoice-v4.3.1';
 const ASSETS = [
   './',
   './index.html',
-  './GIT Invoice.css',
-  './GIT Invoice.js',
+  './GITInvoice.css',
+  './GITInvoice.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -18,7 +18,7 @@ const ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS);
+      return Promise.allSettled(ASSETS.map(asset => cache.add(asset)));
     })
   );
   self.skipWaiting();
@@ -42,6 +42,10 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  if (event.request.method !== 'GET' || !['http:', 'https:'].includes(url.protocol)) {
+    return;
+  }
+
   // Always go to network for API calls (license validation)
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(fetch(event.request));
@@ -55,7 +59,9 @@ self.addEventListener('fetch', event => {
       return fetch(event.request).then(response => {
         if (response && response.status === 200 && response.type === 'basic') {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          event.waitUntil(
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone))
+          );
         }
         return response;
       });

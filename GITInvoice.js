@@ -1423,7 +1423,7 @@ let editingUserId = null;
 
 function openAddUserModal(forceOwner = false) {
     editingUserId = null;
-    document.getElementById('user-modal-title').textContent = 'Add User';
+    document.getElementById('user-modal-title').textContent = forceOwner ? 'Create Owner Account' : 'Add New User';
     document.getElementById('user-form-username').value = '';
     document.getElementById('user-form-password').value = '';
     document.getElementById('user-form-password2').value = '';
