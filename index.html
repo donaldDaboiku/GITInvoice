@@ -7,10 +7,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="GIT Invoice">
+    <meta name="apple-mobile-web-app-title" content="GITInvoice">
     <meta name="description" content="Professional invoicing app. Works offline. Your data never leaves your device.">
 
-    <title>GIT Invoice — Professional Invoicing</title>
+    <title>GITInvoice — Professional Invoicing</title>
 
     <link rel="icon" href="./icons/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
@@ -36,7 +36,7 @@
         <div class="user-login-wrap">
             <div class="user-login-header">
                 <div class="user-login-logo">
-                    <img src="./icons/icon-192-maskable.png" alt="GIT Invoice" class="login-logo-img">
+                    <img src="./icons/icon-192-maskable.png" alt="GITInvoice" class="login-logo-img">
                     GIT<span>Invoice</span>
                 </div>
                 <div class="user-login-sub" id="user-login-sub">Who's working today?</div>
@@ -75,8 +75,15 @@
         <!-- Sidebar + Content row -->
         <div class="app-container" style="flex:1; min-height:0;">
 
+        <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-controls="app-sidebar" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="mobile-menu-backdrop" aria-hidden="true"></div>
+
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="app-sidebar">
             <div class="logo">
                 <div class="logo-icon"></div>
                 <div class="logo-text">GIT<span>Invoice</span> <small style="color: var(--text-muted); font-size: 13px;">v4</small></div>

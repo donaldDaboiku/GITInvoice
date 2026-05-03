@@ -1662,11 +1662,44 @@ function initApp() {
 // ==================== NAVIGATION ====================
 
 function setupNavigation() {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const menuBackdrop = document.querySelector('.mobile-menu-backdrop');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleMobileMenu);
+    }
+
+    if (menuBackdrop) {
+        menuBackdrop.addEventListener('click', closeMobileMenu);
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeMobileMenu();
+    });
+
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
         item.addEventListener('click', function () {
             navigateToPage(this.getAttribute('data-page'));
         });
     });
+}
+
+function toggleMobileMenu() {
+    const isOpen = document.body.classList.toggle('mobile-menu-open');
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    if (menuToggle) {
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    }
+}
+
+function closeMobileMenu() {
+    document.body.classList.remove('mobile-menu-open');
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    if (menuToggle) {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.setAttribute('aria-label', 'Open menu');
+    }
 }
 
 function navigateToPage(pageName) {
@@ -1686,6 +1719,8 @@ function navigateToPage(pageName) {
 
     const selectedPage = document.getElementById(`${pageName}-page`);
     if (selectedPage) selectedPage.classList.remove('hidden');
+
+    closeMobileMenu();
 
     if (pageName === 'invoices') loadInvoices();
     else if (pageName === 'dashboard') updateDashboard();

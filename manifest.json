@@ -1,6 +1,6 @@
 {
-  "name": "invoHub - Professional Invoice Management",
-  "short_name": "invoHub",
+  "name": "GITInvoice - Professional Invoice Management",
+  "short_name": "GITInvoice",
   "description": "Create professional invoices and receipts. Works offline. Your data stays on your device.",
   "start_url": "./index.html",
   "display": "standalone",
