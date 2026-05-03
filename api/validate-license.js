@@ -16,6 +16,17 @@ const TIER_MAP = {
   'GITInvoice-business': { tier: 'business', users_max: 25 },
 };
 
+const DEMO_LICENSES = {
+  'DEMO-SOLO':     { tier: 'solo',     users_max: 1,  email: 'demo-solo@gitinvoice.local' },
+  'DEMO-TEAM':     { tier: 'team',     users_max: 10, email: 'demo-team@gitinvoice.local' },
+  'DEMO-BUSINESS': { tier: 'business', users_max: 25, email: 'demo-business@gitinvoice.local' },
+};
+
+function getDemoLicense(key) {
+  if (process.env.ENABLE_DEMO_LICENSES !== 'true') return null;
+  return DEMO_LICENSES[key] || null;
+}
+
 // Startup check for required env vars (to avoid silent failures later)
 // misconfiguration immediately in Vercel function logs.
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
@@ -76,6 +87,17 @@ export default async function handler(req, res) {
   if (!license_key) return res.json({ success: false, error: 'No license key provided.' });
 
   const key = license_key.trim().toUpperCase();
+  const demoLicense = getDemoLicense(key);
+
+  if (demoLicense) {
+    return res.json({
+      success: true,
+      tier: demoLicense.tier,
+      users_max: demoLicense.users_max,
+      users_used: 1,
+      email: demoLicense.email,
+    });
+  }
 
   // ── ACTION: check (silent background ping on every app load) ───────────
   if (action === 'check') {

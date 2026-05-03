@@ -583,8 +583,10 @@ function showUserSelectView(pendingAction) {
                 <div style="font-size:40px; margin-bottom:16px;">👤</div>
                 <div style="font-size:15px; margin-bottom:8px;">No users set up yet.</div>
                 <div style="font-size:13px; margin-bottom:24px;">Create the owner account to get started.</div>
-                <button class="btn-activate" onclick="openAddUserModal(true)">Create Owner Account</button>
+                <button class="btn-activate" id="create-owner-account-btn" type="button">Create Owner Account</button>
             </div>`;
+        const ownerBtn = document.getElementById('create-owner-account-btn');
+        if (ownerBtn) ownerBtn.addEventListener('click', () => openAddUserModal(true));
         divider.style.display = 'none';
     } else {
         grid.innerHTML = users.map(u => `
