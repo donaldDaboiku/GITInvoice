@@ -6,7 +6,7 @@
 
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
-// IMPORTANT: Set back to false before deploying to production.
+// IMPORTANT: Set back to false before deploying to production. 
 const DEV_MODE = false;
 
 // ==================== DEMO DATA ====================
@@ -495,10 +495,63 @@ function clearSession() {
 }
 
 async function hashPassword(password) {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    if (globalThis.crypto?.subtle && globalThis.TextEncoder) {
+        const msgBuffer = new TextEncoder().encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    return sha256Fallback(password);
+}
+
+function sha256Fallback(input) {
+    const bytes = globalThis.TextEncoder
+        ? Array.from(new TextEncoder().encode(input))
+        : Array.from(unescape(encodeURIComponent(input)), c => c.charCodeAt(0));
+    const words = [];
+    const rightRotate = (value, amount) => (value >>> amount) | (value << (32 - amount));
+    const constants = [
+        0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+        0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+        0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+        0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+        0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+        0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+        0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+        0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+    ];
+    let hash = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+
+    const bitLength = bytes.length * 8;
+    bytes.push(0x80);
+    while ((bytes.length % 64) !== 56) bytes.push(0);
+    for (let i = 7; i >= 0; i--) bytes.push((bitLength / Math.pow(2, i * 8)) & 255);
+
+    for (let i = 0; i < bytes.length; i += 64) {
+        for (let j = 0; j < 16; j++) {
+            words[j] = (bytes[i + j * 4] << 24) | (bytes[i + j * 4 + 1] << 16) | (bytes[i + j * 4 + 2] << 8) | bytes[i + j * 4 + 3];
+        }
+        for (let j = 16; j < 64; j++) {
+            const s0 = rightRotate(words[j - 15], 7) ^ rightRotate(words[j - 15], 18) ^ (words[j - 15] >>> 3);
+            const s1 = rightRotate(words[j - 2], 17) ^ rightRotate(words[j - 2], 19) ^ (words[j - 2] >>> 10);
+            words[j] = (words[j - 16] + s0 + words[j - 7] + s1) >>> 0;
+        }
+
+        let [a,b,c,d,e,f,g,h] = hash;
+        for (let j = 0; j < 64; j++) {
+            const s1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
+            const ch = (e & f) ^ (~e & g);
+            const temp1 = (h + s1 + ch + constants[j] + words[j]) >>> 0;
+            const s0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
+            const maj = (a & b) ^ (a & c) ^ (b & c);
+            const temp2 = (s0 + maj) >>> 0;
+            h = g; g = f; f = e; e = (d + temp1) >>> 0;
+            d = c; c = b; b = a; a = (temp1 + temp2) >>> 0;
+        }
+        hash = hash.map((value, j) => (value + [a,b,c,d,e,f,g,h][j]) >>> 0);
+    }
+
+    return hash.map(value => value.toString(16).padStart(8, '0')).join('');
 }
 
 function showUserLoginScreen(pendingAction) {
@@ -1424,9 +1477,11 @@ function switchUser() {
 // ==================== USER MANAGEMENT (owner) ====================
 
 let editingUserId = null;
+let userModalForceOwner = false;
 
 function openAddUserModal(forceOwner = false) {
     editingUserId = null;
+    userModalForceOwner = forceOwner;
     document.getElementById('user-modal-title').textContent = forceOwner ? 'Create Owner Account' : 'Add New User';
     document.getElementById('user-form-username').value = '';
     document.getElementById('user-form-password').value = '';
@@ -1442,6 +1497,7 @@ function openEditUserModal(userId) {
     const user  = users.find(u => u.id === userId);
     if (!user) return;
     editingUserId = userId;
+    userModalForceOwner = false;
     document.getElementById('user-modal-title').textContent = 'Edit User';
     document.getElementById('user-form-username').value = user.username;
     document.getElementById('user-form-password').value = '';
@@ -1455,13 +1511,14 @@ function openEditUserModal(userId) {
 function closeUserModal() {
     document.getElementById('user-modal').classList.remove('active');
     editingUserId = null;
+    userModalForceOwner = false;
 }
 
 async function saveUser() {
     const username  = document.getElementById('user-form-username').value.trim();
     const password  = document.getElementById('user-form-password').value;
     const password2 = document.getElementById('user-form-password2').value;
-    const role      = document.getElementById('user-form-role').value;
+    const role      = userModalForceOwner ? 'owner' : document.getElementById('user-form-role').value;
     const errorEl   = document.getElementById('user-form-error');
 
     errorEl.textContent = '';
@@ -1471,43 +1528,55 @@ async function saveUser() {
     if (password && password !== password2) { errorEl.textContent = 'Passwords do not match.'; return; }
 
     const users = getUsers();
+    const wasEditing = !!editingUserId;
 
-    if (editingUserId) {
-        // Edit existing
-        const idx = users.findIndex(u => u.id === editingUserId);
-        if (idx === -1) return;
-        // Check duplicate username (excluding self)
-        if (users.some(u => u.id !== editingUserId && u.username.toLowerCase() === username.toLowerCase())) {
-            errorEl.textContent = 'That username is already taken.'; return;
+    try {
+        if (editingUserId) {
+            // Edit existing
+            const idx = users.findIndex(u => u.id === editingUserId);
+            if (idx === -1) return;
+            // Check duplicate username (excluding self)
+            if (users.some(u => u.id !== editingUserId && u.username.toLowerCase() === username.toLowerCase())) {
+                errorEl.textContent = 'That username is already taken.'; return;
+            }
+            users[idx].username = username;
+            users[idx].role = role;
+            if (password) users[idx].passwordHash = await hashPassword(password);
+            users[idx].updatedAt = new Date().toISOString();
+        } else {
+            // Check seat limit
+            const maxUsers = getUsersMax();
+            if (users.length >= maxUsers) {
+                errorEl.textContent = `Your license allows up to ${maxUsers} user(s). Upgrade to add more.`; return;
+            }
+            // Check duplicate username
+            if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+                errorEl.textContent = 'That username is already taken.'; return;
+            }
+            users.push({
+                id: generateId(), username, role,
+                passwordHash: await hashPassword(password),
+                createdAt: new Date().toISOString()
+            });
         }
-        users[idx].username = username;
-        users[idx].role = role;
-        if (password) users[idx].passwordHash = await hashPassword(password);
-        users[idx].updatedAt = new Date().toISOString();
-    } else {
-        // Check seat limit
-        const maxUsers = getUsersMax();
-        if (users.length >= maxUsers) {
-            errorEl.textContent = `Your license allows up to ${maxUsers} user(s). Upgrade to add more.`; return;
-        }
-        // Check duplicate username
-        if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
-            errorEl.textContent = 'That username is already taken.'; return;
-        }
-        users.push({
-            id: generateId(), username, role,
-            passwordHash: await hashPassword(password),
-            createdAt: new Date().toISOString()
-        });
+    } catch (err) {
+        console.error('Could not prepare user account:', err);
+        errorEl.textContent = 'Could not create account in this browser. Try opening the app on localhost or HTTPS.';
+        return;
     }
 
-    saveUsers(users);
+    if (!saveUsers(users)) {
+        errorEl.textContent = 'Could not save account. Your browser storage may be full or blocked.';
+        return;
+    }
+
+    const wasFirstUser = !wasEditing && users.length === 1;
     closeUserModal();
     loadUsersManagementList();
-    showToast(editingUserId ? 'User updated.' : 'User added.');
+    showToast(wasEditing ? 'User updated.' : 'User added.');
 
     // If this was the first user (owner setup), proceed to login
-    if (users.length === 1) {
+    if (wasFirstUser) {
         showUserSelectView();
     }
 }
