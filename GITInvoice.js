@@ -1378,8 +1378,15 @@ async function submitUserLogin() {
         return;
     }
 
+    const shouldOpenSettings = user.role === 'owner' && user.openSettingsOnFirstLogin === true;
+    if (shouldOpenSettings) {
+        user.openSettingsOnFirstLogin = false;
+        user.updatedAt = new Date().toISOString();
+        saveUsers(users);
+    }
+
     saveSession({ userId: user.id, username: user.username, role: user.role, loginAt: new Date().toISOString() });
-    launchMainApp(window._pendingAction || null);
+    launchMainApp(shouldOpenSettings ? 'settings' : (window._pendingAction || null));
 }
 
 function launchMainApp(action) {
@@ -1438,6 +1445,8 @@ function launchMainApp(action) {
     // Handle PWA shortcut actions
     if (action === 'new-invoice') {
         setTimeout(() => openInvoiceModal(), 300);
+    } else if (action === 'settings') {
+        navigateToPage('settings');
     } else if (action === 'customers') {
         navigateToPage('customers');
     } else if (action === 'reports') {
@@ -1558,6 +1567,7 @@ async function saveUser() {
             users.push({
                 id: generateId(), username, role,
                 passwordHash: await hashPassword(password),
+                openSettingsOnFirstLogin: role === 'owner',
                 createdAt: new Date().toISOString()
             });
         }
