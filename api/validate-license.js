@@ -17,13 +17,15 @@ const TIER_MAP = {
 };
 
 const DEMO_LICENSES = {
+  'DEMO':          { tier: 'business', users_max: 25, email: 'demo-business@gitinvoice.local' },
+  'DEMO-LICENSE':  { tier: 'business', users_max: 25, email: 'demo-business@gitinvoice.local' },
   'DEMO-SOLO':     { tier: 'solo',     users_max: 1,  email: 'demo-solo@gitinvoice.local' },
   'DEMO-TEAM':     { tier: 'team',     users_max: 10, email: 'demo-team@gitinvoice.local' },
   'DEMO-BUSINESS': { tier: 'business', users_max: 25, email: 'demo-business@gitinvoice.local' },
 };
 
 function getDemoLicense(key) {
-  if (process.env.ENABLE_DEMO_LICENSES !== 'true') return null;
+  if (process.env.ENABLE_DEMO_LICENSES === 'false') return null;
   return DEMO_LICENSES[key] || null;
 }
 

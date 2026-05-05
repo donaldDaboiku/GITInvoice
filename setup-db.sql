@@ -40,3 +40,36 @@ create or replace view active_seats as
   from activations
   group by license_key, tier, users_max
   order by last_active desc;
+
+-- 5. Buyer KYC table — one record per license buyer for manual review
+create table if not exists buyer_kyc (
+  id                bigint        generated always as identity primary key,
+  license_key       text          not null unique,
+  device_id         text          default '',
+  email             text          default '',
+  tier              text          default 'solo',
+  full_name         text          not null,
+  phone             text          not null,
+  country           text          not null,
+  business_name     text          default '',
+  business_type     text          default 'individual',
+  id_type           text          not null,
+  id_number         text          not null,
+  business_reg      text          default '',
+  address           text          not null,
+  status            text          default 'pending', -- pending | verified | rejected
+  rejection_reason  text          default '',
+  submitted_at      timestamptz   default now(),
+  reviewed_at       timestamptz,
+  updated_at        timestamptz   default now()
+);
+
+create index if not exists idx_buyer_kyc_license on buyer_kyc (license_key);
+create index if not exists idx_buyer_kyc_status  on buyer_kyc (status);
+
+alter table buyer_kyc enable row level security;
+
+create policy "buyer_kyc_service_full_access" on buyer_kyc
+  for all
+  using (true)
+  with check (true);

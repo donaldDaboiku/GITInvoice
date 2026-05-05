@@ -25,7 +25,7 @@
     <!-- ==================== PRIVACY NOTICE (first run) ==================== -->
     <div id="privacy-notice">
         <div class="privacy-notice-text">
-            🔒 <strong>Your privacy:</strong> All invoices, customers, and settings are stored only on <strong>this device</strong>. We collect zero business data. Nothing is uploaded to any server.
+            🔒 <strong>Your privacy:</strong> Invoices, customers, and settings are stored on <strong>this device</strong>. License activation and buyer KYC are submitted securely for verification.
         </div>
         <button class="btn-privacy-ok" onclick="acknowledgePrivacy()">Got it</button>
     </div>
@@ -686,7 +686,7 @@
 
     <!-- Customer Modal -->
     <div id="customer-modal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 760px;">
             <div class="modal-header">
                 <div class="modal-title" id="customer-modal-title">Add New Customer</div>
                 <button class="close-btn" onclick="closeCustomerModal()">×</button>
@@ -720,6 +720,87 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeCustomerModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveCustomer()">Save Customer</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Buyer KYC Modal -->
+    <div id="buyer-kyc-modal" class="modal">
+        <div class="modal-content" style="max-width:760px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Buyer KYC Verification</div>
+                    <div class="buyer-kyc-summary">
+                        <span id="buyer-kyc-email-display">Verified buyer</span>
+                        <span id="buyer-kyc-tier-display">Solo plan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="kyc-required-note">
+                    Complete buyer verification to activate full app access for this license.
+                </div>
+                <form id="buyer-kyc-form" onsubmit="return false;">
+                    <input type="hidden" id="buyer-kyc-license-key">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Legal Name *</label>
+                            <input type="text" class="form-input" id="buyer-kyc-full-name" autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone *</label>
+                            <input type="tel" class="form-input" id="buyer-kyc-phone" autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country *</label>
+                            <input type="text" class="form-input" id="buyer-kyc-country" value="Nigeria" autocomplete="country-name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Type</label>
+                            <select class="form-select" id="buyer-kyc-business-type">
+                                <option value="individual">Individual / Sole Trader</option>
+                                <option value="registered_business">Registered Business</option>
+                                <option value="company">Company</option>
+                                <option value="nonprofit">Nonprofit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Name</label>
+                            <input type="text" class="form-input" id="buyer-kyc-business-name" autocomplete="organization">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Business Reg. Number</label>
+                            <input type="text" class="form-input" id="buyer-kyc-business-reg" placeholder="RC / BN number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ID Type *</label>
+                            <select class="form-select" id="buyer-kyc-id-type">
+                                <option value="">Select ID type</option>
+                                <option value="nin">NIN</option>
+                                <option value="bvn">BVN</option>
+                                <option value="passport">International Passport</option>
+                                <option value="drivers_license">Driver's License</option>
+                                <option value="voters_card">Voter's Card</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ID Number *</label>
+                            <input type="text" class="form-input" id="buyer-kyc-id-number" autocomplete="off">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Residential / Business Address *</label>
+                            <textarea class="form-textarea" id="buyer-kyc-address" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="license-error-msg" id="buyer-kyc-error"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="buyer-kyc-submit-btn" onclick="submitBuyerKyc()">
+                    <span id="buyer-kyc-submit-text">Submit KYC</span>
+                </button>
             </div>
         </div>
     </div>
@@ -830,7 +911,7 @@
 
             <div class="license-privacy-note" style="margin-top:16px;">
                 <span>🔒</span>
-                <span>One-time purchase. No subscriptions. Your data <strong>never leaves this device</strong>.</span>
+                <span>One-time purchase. No subscriptions. Invoice and customer data stay on this device; buyer KYC is submitted for verification.</span>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@
 
 // ==================== CONFIGURATION ====================
  const LICENSE_VALIDATE_URL = '/api/validate-license'; 
+ const BUYER_KYC_URL = '/api/buyer-kyc';
 
 // ==================== DEV MODE ====================
 // Set to true to bypass license check during development.
@@ -131,6 +132,8 @@ const STORAGE_KEYS = {
     LICENSE_EMAIL:    'GIT Invoice_license_email',
     LICENSE_DEVICES:  'GIT Invoice_license_devices',
     DEVICE_ACTIVATED: 'GIT Invoice_device_activated',
+    BUYER_KYC_STATUS: 'GIT Invoice_buyer_kyc_status',
+    BUYER_KYC_SUBMITTED_AT: 'GIT Invoice_buyer_kyc_submitted_at',
     PRIVACY_ACK:      'GIT Invoice_privacy_ack',
     INVOICE_COUNTER:  'GIT Invoice_invoice_counter',
     LICENSE_TIER:     'GIT Invoice_license_tier',
@@ -364,12 +367,12 @@ async function activateLicense() {
             seedDemoData(data.tier || 'solo');
 
             input.classList.add('success');
-            btnText.innerHTML = '✓ Activated! Loading app...';
+            btnText.innerHTML = '✓ Activated! Complete KYC...';
 
             setTimeout(() => {
                 closePaywall();
                 renderTrialBanner(); // hides the trial banner now licensed
-                showToast('🎉 License activated! Full access unlocked.');
+                showBuyerKycGate({ licenseKey: key, email: data.email || '', tier: data.tier || 'solo' });
             }, 800);
         } else {
             input.classList.add('error');
@@ -467,8 +470,108 @@ function bootApp(action) {
     const gate = document.getElementById('license-gate');
     if (gate) gate.classList.remove('visible');
 
+    if (isLicensed() && !hasSubmittedBuyerKyc()) {
+        showBuyerKycGate();
+        return;
+    }
+
     // Route to user login screen (handles no-users first-run too)
     showUserLoginScreen(action);
+}
+
+// ==================== BUYER KYC ====================
+
+function hasSubmittedBuyerKyc() {
+    const status = localStorage.getItem(STORAGE_KEYS.BUYER_KYC_STATUS);
+    return ['pending', 'verified', 'rejected'].includes(status);
+}
+
+function showBuyerKycGate(context = {}) {
+    document.getElementById('license-gate')?.classList.remove('visible');
+    document.getElementById('user-login-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'none';
+
+    const modal = document.getElementById('buyer-kyc-modal');
+    if (!modal) return;
+
+    const licenseKey = context.licenseKey || localStorage.getItem(STORAGE_KEYS.LICENSE_KEY) || '';
+    const email = context.email || localStorage.getItem(STORAGE_KEYS.LICENSE_EMAIL) || '';
+    const tier = context.tier || localStorage.getItem(STORAGE_KEYS.LICENSE_TIER) || 'solo';
+
+    const emailEl = document.getElementById('buyer-kyc-email-display');
+    const tierEl = document.getElementById('buyer-kyc-tier-display');
+    if (emailEl) emailEl.textContent = email || 'Verified buyer';
+    if (tierEl) tierEl.textContent = `${tier.charAt(0).toUpperCase()}${tier.slice(1)} plan`;
+
+    const licenseInput = document.getElementById('buyer-kyc-license-key');
+    if (licenseInput) licenseInput.value = licenseKey;
+
+    const errorEl = document.getElementById('buyer-kyc-error');
+    if (errorEl) errorEl.textContent = '';
+
+    modal.classList.add('active');
+}
+
+function closeBuyerKycGate() {
+    document.getElementById('buyer-kyc-modal')?.classList.remove('active');
+}
+
+async function submitBuyerKyc() {
+    const errorEl = document.getElementById('buyer-kyc-error');
+    const btn = document.getElementById('buyer-kyc-submit-btn');
+    const btnText = document.getElementById('buyer-kyc-submit-text');
+
+    const payload = {
+        action: 'submit',
+        license_key: localStorage.getItem(STORAGE_KEYS.LICENSE_KEY) || '',
+        device_id: getDeviceId(),
+        email: localStorage.getItem(STORAGE_KEYS.LICENSE_EMAIL) || '',
+        tier: localStorage.getItem(STORAGE_KEYS.LICENSE_TIER) || 'solo',
+        full_name: document.getElementById('buyer-kyc-full-name').value.trim(),
+        phone: document.getElementById('buyer-kyc-phone').value.trim(),
+        country: document.getElementById('buyer-kyc-country').value.trim(),
+        business_name: document.getElementById('buyer-kyc-business-name').value.trim(),
+        business_type: document.getElementById('buyer-kyc-business-type').value,
+        id_type: document.getElementById('buyer-kyc-id-type').value,
+        id_number: document.getElementById('buyer-kyc-id-number').value.trim(),
+        business_reg: document.getElementById('buyer-kyc-business-reg').value.trim(),
+        address: document.getElementById('buyer-kyc-address').value.trim()
+    };
+
+    if (!payload.license_key) {
+        errorEl.textContent = 'Activate your license before submitting KYC.';
+        return;
+    }
+    if (!payload.full_name || !payload.phone || !payload.country || !payload.id_type || !payload.id_number || !payload.address) {
+        errorEl.textContent = 'Please complete all required KYC fields.';
+        return;
+    }
+
+    btn.disabled = true;
+    btnText.innerHTML = '<span class="license-loader"></span> Submitting...';
+    errorEl.textContent = '';
+
+    try {
+        const response = await fetch(BUYER_KYC_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!data.success) throw new Error(data.error || 'KYC submission failed.');
+
+        localStorage.setItem(STORAGE_KEYS.BUYER_KYC_STATUS, data.status || 'pending');
+        localStorage.setItem(STORAGE_KEYS.BUYER_KYC_SUBMITTED_AT, new Date().toISOString());
+        closeBuyerKycGate();
+        showToast('KYC submitted for review. You can continue setup.', 'success');
+        bootApp();
+    } catch (err) {
+        console.error('Buyer KYC submission error:', err);
+        errorEl.textContent = err.message || 'Could not submit KYC. Please try again.';
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Submit KYC';
+    }
 }
 
 // ==================== USER AUTH ====================
@@ -2667,7 +2770,7 @@ function renderFooter() {
         </div>
     `;
 }
-
+ 
 // ==================== CUSTOMERS ====================
 
 function loadCustomers() {
@@ -2704,8 +2807,8 @@ function loadCustomers() {
                     return `
                         <tr>
                             <td><strong>${escapeHtml(c.name)}</strong></td>
-                            <td>${c.email || '—'}</td>
-                            <td>${c.phone || '—'}</td>
+                            <td>${escapeHtml(c.email) || '—'}</td>
+                            <td>${escapeHtml(c.phone) || '—'}</td>
                             <td>${cInvoices.length}</td>
                             <td><strong>${formatCurrency(revenue)}</strong></td>
                             <td>
@@ -2763,8 +2866,8 @@ function filterCustomers() {
                     return `
                         <tr>
                             <td><strong>${escapeHtml(c.name)}</strong></td>
-                            <td>${c.email || '—'}</td>
-                            <td>${c.phone || '—'}</td>
+                            <td>${escapeHtml(c.email) || '—'}</td>
+                            <td>${escapeHtml(c.phone) || '—'}</td>
                             <td>${cInvoices.length}</td>
                             <td><strong>${formatCurrency(revenue)}</strong></td>
                             <td>
