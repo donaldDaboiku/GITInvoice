@@ -1,55 +1,31 @@
 // api/buyer-kyc.js
 // Stores buyer/licensee KYC submissions for admin review.
 
+import { applyCors, json } from './_lib/http.js';
+import { enforceRateLimit } from './_lib/rate-limit.js';
+import { sb } from './_lib/supabase.js';
+
 export const config = { runtime: 'nodejs' };
-
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
-
-function json(res, body, status = 200) {
-  return res.status(status).json(body);
-}
-
-async function sb(path, method = 'GET', body = null) {
-  if (!process.env.SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error('KYC storage is not configured.');
-  }
-
-  const url = `${process.env.SUPABASE_URL}/rest/v1${path}`;
-  const opts = {
-    method,
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: method === 'POST' ? 'resolution=merge-duplicates,return=representation' : 'return=representation',
-    },
-  };
-  if (body) opts.body = JSON.stringify(body);
-
-  const response = await fetch(url, opts);
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
-  if (!response.ok) {
-    const message = data?.message || data?.error || `Supabase request failed (${response.status})`;
-    throw new Error(message);
-  }
-  return data;
-}
 
 function clean(value, max = 500) {
   return String(value || '').trim().slice(0, max);
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCors(res);
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
   const body = req.body || {};
   const action = body.action || 'submit';
+
+  const rateScope = action === 'status' ? 'kyc:status' : 'kyc:submit';
+  const rateConfig = action === 'status'
+    ? { limit: 60, windowMs: 15 * 60 * 1000 }
+    : { limit: 10, windowMs: 15 * 60 * 1000 };
+  if (!enforceRateLimit(req, res, rateScope, rateConfig)) return;
+
   const licenseKey = clean(body.license_key, 120).toUpperCase();
   const deviceId = clean(body.device_id, 120);
 
@@ -57,7 +33,9 @@ export default async function handler(req, res) {
 
   try {
     if (action === 'status') {
-      const rows = await sb(`/buyer_kyc?license_key=eq.${encodeURIComponent(licenseKey)}&select=status,submitted_at,reviewed_at,rejection_reason&limit=1`);
+      const rows = await sb(
+        `/buyer_kyc?license_key=eq.${encodeURIComponent(licenseKey)}&select=status,submitted_at,reviewed_at,rejection_reason&limit=1`
+      );
       const row = Array.isArray(rows) ? rows[0] : null;
       return json(res, {
         success: true,
@@ -70,7 +48,9 @@ export default async function handler(req, res) {
 
     const required = ['full_name', 'phone', 'country', 'id_type', 'id_number', 'address'];
     for (const field of required) {
-      if (!clean(body[field])) return json(res, { success: false, error: 'Please complete all required KYC fields.' }, 400);
+      if (!clean(body[field])) {
+        return json(res, { success: false, error: 'Please complete all required KYC fields.' }, 400);
+      }
     }
 
     const record = {
@@ -92,7 +72,12 @@ export default async function handler(req, res) {
       updated_at: new Date().toISOString(),
     };
 
-    await sb('/buyer_kyc?on_conflict=license_key', 'POST', record);
+    await sb(
+      '/buyer_kyc?on_conflict=license_key',
+      'POST',
+      record,
+      'resolution=merge-duplicates,return=representation'
+    );
     return json(res, { success: true, status: 'pending' });
   } catch (err) {
     console.error('[buyer-kyc]', err);

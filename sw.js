@@ -1,9 +1,22 @@
-// InvoicePro Service Worker - PWA Offline Support
-const CACHE_NAME = 'GIT Invoice-v4.3.2';
+// GITInvoice Service Worker - PWA Offline Support
+const CACHE_NAME = 'GIT Invoice-v4.5.3';
 const ASSETS = [
   './',
   './index.html',
   './GITInvoice.css',
+  './js/config.js',
+  './js/password.js',
+  './js/backup.js',
+  './js/storage.js',
+  './js/utils.js',
+  './js/demo-data.js',
+  './js/auth.js',
+  './js/license.js',
+  './js/inventory.js',
+  './js/invoices.js',
+  './js/customers.js',
+  './js/settings.js',
+  './js/reports.js',
   './GITInvoice.js',
   './manifest.json',
   './icons/icon-192.png',

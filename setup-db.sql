@@ -19,14 +19,12 @@ create index if not exists idx_activations_key        on activations (license_ke
 create index if not exists idx_activations_key_device on activations (license_key, device_id);
 create index if not exists idx_activations_active     on activations (license_key, is_active);
 
--- 3. Row Level Security — enable it, then allow the service role full access
-alter table activations enable row level security;
+-- Prevent duplicate seat rows for the same license + device
+create unique index if not exists idx_activations_key_device_unique
+  on activations (license_key, device_id);
 
--- Allow the anon/service key used by the API to do everything
-create policy "service_full_access" on activations
-  for all
-  using (true)
-  with check (true);
+-- 3. Row Level Security — blocks anon/authenticated clients; service role bypasses RLS
+alter table activations enable row level security;
 
 -- 4. Optional: view to see active seats per license key (useful for support)
 create or replace view active_seats as
@@ -69,7 +67,9 @@ create index if not exists idx_buyer_kyc_status  on buyer_kyc (status);
 
 alter table buyer_kyc enable row level security;
 
-create policy "buyer_kyc_service_full_access" on buyer_kyc
-  for all
-  using (true)
-  with check (true);
+-- =============================================================================
+-- MIGRATION (run once if you previously applied open RLS policies)
+-- =============================================================================
+-- drop policy if exists "service_full_access" on activations;
+-- drop policy if exists "buyer_kyc_service_full_access" on buyer_kyc;
+-- API routes must use SUPABASE_SERVICE_KEY (service role bypasses RLS).
