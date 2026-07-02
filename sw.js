@@ -1,29 +1,31 @@
 // GITInvoice Service Worker - PWA Offline Support
-const CACHE_NAME = 'GIT Invoice-v4.5.3';
+const CACHE_NAME = 'GIT Invoice-v4.5.4';
 const ASSETS = [
-  './',
-  './index.html',
-  './GITInvoice.css',
-  './js/config.js',
-  './js/password.js',
-  './js/backup.js',
-  './js/storage.js',
-  './js/utils.js',
-  './js/demo-data.js',
-  './js/auth.js',
-  './js/license.js',
-  './js/inventory.js',
-  './js/invoices.js',
-  './js/customers.js',
-  './js/settings.js',
-  './js/reports.js',
-  './GITInvoice.js',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-192-maskable.png',
-  './icons/icon-512-maskable.png',
-  './icons/apple-touch-icon.png',
+  '/',
+  '/index.html',
+  '/landing/styles.css',
+  '/app/index.html',
+  '/GITInvoice.css',
+  '/js/config.js',
+  '/js/password.js',
+  '/js/backup.js',
+  '/js/storage.js',
+  '/js/utils.js',
+  '/js/demo-data.js',
+  '/js/auth.js',
+  '/js/license.js',
+  '/js/inventory.js',
+  '/js/invoices.js',
+  '/js/customers.js',
+  '/js/settings.js',
+  '/js/reports.js',
+  '/GITInvoice.js',
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-192-maskable.png',
+  '/icons/icon-512-maskable.png',
+  '/icons/apple-touch-icon.png',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
 
@@ -79,9 +81,10 @@ self.addEventListener('fetch', event => {
         return response;
       });
     }).catch(() => {
-      // Offline fallback
       if (event.request.destination === 'document') {
-        return caches.match('./index.html');
+        const path = new URL(event.request.url).pathname;
+        if (path.startsWith('/app')) return caches.match('/app/index.html');
+        return caches.match('/index.html');
       }
     })
   );
