@@ -115,11 +115,12 @@ function renderFooter() {
     const footerEl = document.getElementById('footer-content');
     if (!footerEl) return;
     footerEl.innerHTML = `
-        <div>© ${year} GIT System Software. All rights reserved.</div>
+        <div>© ${year} <a href="https://gitsystemng.com" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">GIT System NG</a>. All rights reserved.</div>
         <div style="margin-top: 6px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://gitsystemsoftware.com/terms" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Terms of Service</a>
-            <a href="https://gitsystemsoftware.com/privacy" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Privacy Policy</a>
-            <a href="https://gitsystemsoftware.com/support" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Support</a>
+            <a href="https://gitsystemng.com" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Home</a>
+            <a href="https://gitsystemng.com/terms" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Terms of Service</a>
+            <a href="https://gitsystemng.com/privacy" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Privacy Policy</a>
+            <a href="https://gitsystemng.com/support" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:none;">Support</a>
         </div>
     `;
 }
