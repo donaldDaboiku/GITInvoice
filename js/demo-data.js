@@ -111,3 +111,42 @@ function seedDemoData(tier) {
 
     console.log(`[GIT Invoice] Demo data seeded for ${tier} plan (${invoices.length} invoices, ${customers.length} customers)`);
 }
+
+function isDemoLicenseKey(key) {
+    if (!key) return false;
+    var k = String(key).trim().toUpperCase();
+    return k === 'DEMO' || k.indexOf('DEMO-') === 0 || k === 'DEMO-LICENSE';
+}
+
+/**
+ * Seed login users for demo licenses (password: DEMO_USER_PASSWORD).
+ * Solo: owner. Team/Business: owner + cashiers.
+ * Only runs when no users exist yet.
+ */
+async function ensureDemoUsers(tier) {
+    var existing = getUsers();
+    if (existing.length > 0) return;
+
+    var password = typeof DEMO_USER_PASSWORD === 'string' ? DEMO_USER_PASSWORD : 'demo1234';
+    var hash = await hashPassword(password);
+    var now = new Date().toISOString();
+    var users = [
+        { id: 'demo-owner', username: 'owner', role: 'owner', passwordHash: hash, createdAt: now }
+    ];
+
+    if (tier === 'team' || tier === 'business') {
+        users.push(
+            { id: 'demo-cashier1', username: 'cashier1', role: 'cashier', passwordHash: hash, createdAt: now },
+            { id: 'demo-cashier2', username: 'cashier2', role: 'cashier', passwordHash: hash, createdAt: now }
+        );
+    }
+
+    if (tier === 'business') {
+        users.push(
+            { id: 'demo-cashier3', username: 'supervisor1', role: 'cashier', passwordHash: hash, createdAt: now }
+        );
+    }
+
+    saveUsers(users);
+    console.log('[GIT Invoice] Demo users seeded. Login: owner / ' + password);
+}

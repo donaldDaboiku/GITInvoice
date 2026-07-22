@@ -8,6 +8,8 @@ var SURVEY_TRIGGER_COUNT = 5;
 var DEV_MODE = false;
 var TRIAL_INVOICE_LIMIT = 3;
 var TRIAL_CUSTOMER_LIMIT = 2;
+/** Shared login password for demo accounts seeded after DEMO-* license activation. */
+var DEMO_USER_PASSWORD = 'demo1234';
 
 var STORAGE_KEYS = {
     INVOICES:         'GIT Invoice_invoices',

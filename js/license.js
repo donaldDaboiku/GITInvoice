@@ -123,6 +123,14 @@ function showPaywall(reason, prefillKey) {
     var errEl = document.getElementById('paywall-error');
     if (errEl) errEl.textContent = '';
 
+    var demoHint = document.getElementById('demo-keys-hint');
+    if (demoHint) {
+        var host = window.location.hostname;
+        var showDemoHint = host === 'localhost' || host === '127.0.0.1' ||
+            window.location.search.indexOf('demo=1') !== -1;
+        demoHint.style.display = showDemoHint ? 'block' : 'none';
+    }
+
     modal.classList.add('visible');
 }
 
@@ -138,7 +146,7 @@ async function activateLicense() {
     var errorEl = document.getElementById('paywall-error');
     var key = input.value.trim().toUpperCase();
 
-    if (!key || key.length < 8) {
+    if (!key || (key.length < 8 && !isDemoLicenseKey(key))) {
         input.classList.add('error');
         errorEl.textContent = 'Please enter a valid license key from your Gumroad receipt email.';
         return;
@@ -157,6 +165,9 @@ async function activateLicense() {
         var data = await response.json();
 
         if (data.success) {
+            var tier = data.tier || 'solo';
+            var isDemo = isDemoLicenseKey(key);
+
             localStorage.setItem(STORAGE_KEYS.LICENSE_KEY, key);
             localStorage.setItem(STORAGE_KEYS.LICENSE_EMAIL, data.email || 'Verified');
             localStorage.setItem(STORAGE_KEYS.DEVICE_ACTIVATED, 'true');
@@ -166,17 +177,27 @@ async function activateLicense() {
             if (data.users_max) {
                 localStorage.setItem(STORAGE_KEYS.LICENSE_DEVICES, (data.users_used || 1) + '/' + data.users_max);
             }
-            if (data.tier) localStorage.setItem(STORAGE_KEYS.LICENSE_TIER, data.tier);
+            localStorage.setItem(STORAGE_KEYS.LICENSE_TIER, tier);
 
-            seedDemoData(data.tier || 'solo');
+            seedDemoData(tier);
+            if (isDemo) {
+                await ensureDemoUsers(tier);
+                localStorage.setItem(STORAGE_KEYS.BUYER_KYC_STATUS, 'verified');
+            }
 
             input.classList.add('success');
-            btnText.innerHTML = '✓ Activated! Complete KYC...';
+            btnText.innerHTML = isDemo ? '✓ Demo activated!' : '✓ Activated! Complete KYC...';
 
             setTimeout(function () {
                 closePaywall();
                 renderTrialBanner();
-                showBuyerKycGate({ licenseKey: key, email: data.email || '', tier: data.tier || 'solo' });
+                if (isDemo) {
+                    var pw = typeof DEMO_USER_PASSWORD === 'string' ? DEMO_USER_PASSWORD : 'demo1234';
+                    showToast('Demo ready — login as owner / ' + pw, 'success');
+                    showUserLoginScreen();
+                } else {
+                    showBuyerKycGate({ licenseKey: key, email: data.email || '', tier: tier });
+                }
             }, 800);
         } else {
             input.classList.add('error');
