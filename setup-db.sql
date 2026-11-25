@@ -27,7 +27,8 @@ create unique index if not exists idx_activations_key_device_unique
 alter table activations enable row level security;
 
 -- 4. Optional: view to see active seats per license key (useful for support)
-create or replace view active_seats as
+create or replace view active_seats
+with (security_invoker = true) as
   select
     license_key,
     tier,
