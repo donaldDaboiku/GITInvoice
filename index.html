@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GITInvoice — Professional invoicing that works offline. Your data stays on your device. Invoices, customers, inventory, and reports in one PWA.">
+  <meta name="description" content="GITInvoice — Professional invoicing that works offline. Your data stays on your device.">
   <meta name="theme-color" content="#ff6b35">
   <title>GITInvoice — Professional Invoicing, Offline & Private</title>
   <link rel="icon" href="/icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/landing/styles.css">
 </head>
 <body>
@@ -15,7 +18,7 @@
   <nav class="nav" id="nav">
     <div class="container nav-inner">
       <a href="/" class="logo">
-        <img src="/icons/icon-192-maskable.png" alt="GITInvoice">
+        <img src="/icons/icon-192-maskable.png" alt="">
         GIT<span>Invoice</span>
       </a>
       <ul class="nav-links" id="nav-links">
@@ -25,114 +28,100 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#privacy">Privacy</a></li>
       </ul>
-      <a href="/app" class="btn btn-primary">Launch App →</a>
-      <button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+      <a href="/app" class="btn btn-primary">Open app</a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu">☰</button>
     </div>
   </nav>
 
   <header class="hero">
-    <div class="hero-bg">
-      <div class="hero-orb hero-orb-1"></div>
-      <div class="hero-orb hero-orb-2"></div>
-    </div>
-    <div class="container hero-grid">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="dot"></span>
-          Works offline · Install as PWA
-        </div>
-        <h1>Invoicing that stays <em>on your device</em></h1>
-        <p class="hero-lead">
-          Create professional invoices, manage customers, track inventory, and run reports —
-          without sending your business data to the cloud.
-        </p>
-        <div class="hero-cta">
-          <a href="/app" class="btn btn-primary">Try Free — 3 Invoices</a>
-          <a href="#pricing" class="btn btn-ghost">View Plans</a>
-        </div>
-        <div class="hero-meta">
-          <span>✓ <strong>Solo</strong> — one-time license</span>
-          <span>✓ <strong>Offline-first</strong> PWA</span>
-          <span>✓ <strong>Team & Business</strong> — monthly</span>
-        </div>
+    <div class="container hero-main">
+      <div class="hero-brand">GIT<span>Invoice</span></div>
+      <h1 class="hero-headline">Invoicing that stays on your device</h1>
+      <p class="hero-lead">Create invoices, manage customers, and run reports offline — without sending business data to the cloud.</p>
+      <div class="hero-cta">
+        <a href="/app" class="btn btn-primary">Try free — 3 invoices</a>
+        <a href="#pricing" class="btn btn-ghost">See plans</a>
       </div>
+    </div>
 
-      <div class="hero-preview">
-        <div class="preview-frame">
-          <div class="preview-bar">
-            <span class="preview-dot"></span>
-            <span class="preview-dot"></span>
-            <span class="preview-dot"></span>
-          </div>
-          <div class="preview-body">
-            <div class="preview-stat-row">
-              <div class="preview-stat">
-                <div class="preview-stat-label">Revenue</div>
-                <div class="preview-stat-value accent">₦842K</div>
-              </div>
-              <div class="preview-stat">
-                <div class="preview-stat-label">Invoices</div>
-                <div class="preview-stat-value">47</div>
-              </div>
-              <div class="preview-stat">
-                <div class="preview-stat-label">Paid</div>
-                <div class="preview-stat-value green">89%</div>
-              </div>
+    <div class="hero-stage" aria-hidden="true">
+      <div class="hero-stage-plane">
+        <div class="invoice-sheet">
+          <div class="invoice-top">
+            <div>
+              <h3>SwiftMart Superstore</h3>
+              <p>Invoice for Blessing Catering Co.</p>
             </div>
-            <div class="preview-invoice">
-              <div class="preview-invoice-header">
-                <strong>INV-0047</strong>
-                <span class="status-pill status-paid">Paid</span>
-              </div>
-              <div class="preview-row"><span>Acme Corp</span><span>₦125,000</span></div>
-              <div class="preview-row"><span>Design Studio</span><span>₦48,500</span></div>
-              <div class="preview-row"><span>Fresh Foods Ltd</span><span>₦92,000</span></div>
+            <div class="invoice-meta">
+              <strong>INV-2026-0047</strong>
+              Due 12 Apr 2026<br>
+              Status: Paid
+            </div>
+          </div>
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Frozen chicken (1kg packs)</td>
+                <td>50</td>
+                <td>₦225,000</td>
+              </tr>
+              <tr>
+                <td>Tomato paste (crates)</td>
+                <td>5</td>
+                <td>₦90,000</td>
+              </tr>
+              <tr>
+                <td>Delivery</td>
+                <td>1</td>
+                <td>₦15,000</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="invoice-total">
+            <div>
+              <div class="label">Total</div>
+              <div class="value">₦346,500</div>
             </div>
           </div>
         </div>
-        <div class="floating-tag offline">📡 Works offline</div>
-        <div class="floating-tag secure">🔒 Data on device</div>
       </div>
     </div>
   </header>
 
-  <section id="features">
+  <section id="features" class="features">
     <div class="container">
-      <div class="section-header">
-        <div class="section-label">Features</div>
-        <h2 class="section-title">Everything you need to get paid</h2>
-        <p class="section-sub">Built for freelancers, shops, and growing teams — from first invoice to full business operations.</p>
+      <div class="section-head">
+        <div class="section-kicker">Features</div>
+        <h2 class="section-title">Built to get you paid</h2>
+        <p class="section-sub">From freelancers to growing teams — invoices, customers, stock, and reports in one installable app.</p>
       </div>
-      <div class="features-grid">
-        <article class="feature-card">
-          <div class="feature-icon">🧾</div>
-          <h3>Professional Invoices</h3>
-          <p>Create, preview, and print polished invoices with your logo, tax settings, and custom numbering.</p>
+      <div class="feature-list">
+        <article class="feature-row">
+          <h3>Professional invoices</h3>
+          <p>Create, preview, and print branded invoices with tax, custom numbering, and your logo.</p>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">👥</div>
-          <h3>Customer Management</h3>
-          <p>Store contacts, autocomplete on new invoices, and send email campaigns to your customer list.</p>
+        <article class="feature-row">
+          <h3>Customers</h3>
+          <p>Save contacts, autocomplete on new invoices, and keep notes for every relationship.</p>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Reports & Charts</h3>
-          <p>Revenue trends, status breakdowns, and profit & loss — export your data anytime.</p>
+        <article class="feature-row">
+          <h3>Reports</h3>
+          <p>Revenue trends, status breakdowns, and profit &amp; loss — export when you need it.</p>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">📦</div>
-          <h3>Inventory & Stock</h3>
-          <p>Product catalogue, low-stock alerts, and automatic stock deduction on paid invoices. Team+ plans.</p>
+        <article class="feature-row">
+          <h3>Inventory &amp; quotes</h3>
+          <p>Stock tracking, low-stock alerts, quotes, and expenses on Team and Business plans.</p>
         </article>
-        <article class="feature-card">
-          <div class="feature-icon">💬</div>
-          <h3>Quotes & Expenses</h3>
-          <p>Send quotes, convert them to invoices in one click, and log business expenses. Team+ plans.</p>
-        </article>
-        <article class="feature-card">
-          <div class="feature-icon">🔐</div>
-          <h3>Multi-User Access</h3>
-          <p>Owner and cashier roles. Cashiers see only their own invoices. Up to 25 users on Business.</p>
+        <article class="feature-row">
+          <h3>Multi-user access</h3>
+          <p>Owner and cashier roles. Cashiers only see their own invoices. Up to 25 users on Business.</p>
         </article>
       </div>
     </div>
@@ -140,31 +129,27 @@
 
   <section id="how">
     <div class="container">
-      <div class="section-header">
-        <div class="section-label">How it works</div>
-        <h2 class="section-title">Up and running in minutes</h2>
-        <p class="section-sub">No account signup. No cloud sync. Just open, work, and own your data.</p>
+      <div class="section-head">
+        <div class="section-kicker">How it works</div>
+        <h2 class="section-title">Ready in minutes</h2>
+        <p class="section-sub">No account signup. No cloud sync. Open the app and start invoicing.</p>
       </div>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
+      <div class="how-steps">
+        <div class="how-step">
           <h3>Open the app</h3>
-          <p>Launch in your browser or install as a PWA on desktop or mobile.</p>
+          <p>Use it in the browser or install as a PWA on desktop or phone.</p>
         </div>
-        <div class="step">
-          <div class="step-num">2</div>
+        <div class="how-step">
           <h3>Try for free</h3>
           <p>Create up to 3 invoices and 2 customers before buying a license.</p>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3>Buy & activate</h3>
+        <div class="how-step">
+          <h3>Buy &amp; activate</h3>
           <p>Purchase on Gumroad, paste your license key, and unlock your plan.</p>
         </div>
-        <div class="step">
-          <div class="step-num">4</div>
+        <div class="how-step">
           <h3>Work offline</h3>
-          <p>Your invoices and customers stay on this device — even without internet.</p>
+          <p>Invoices and customers stay on this device — even without internet.</p>
         </div>
       </div>
     </div>
@@ -172,107 +157,95 @@
 
   <section id="pricing" class="pricing">
     <div class="container">
-      <div class="section-header">
-        <div class="section-label">Pricing</div>
-        <h2 class="section-title">Simple pricing that scales with you</h2>
-        <p class="section-sub">Solo is a one-time license. Team and Business are monthly subscriptions — cancel anytime.</p>
+      <div class="section-head center">
+        <div class="section-kicker">Pricing</div>
+        <h2 class="section-title">Simple plans that scale</h2>
+        <p class="section-sub">Solo is a one-time license. Team and Business are monthly — cancel anytime.</p>
       </div>
       <div class="pricing-grid">
         <article class="price-card">
-          <div class="price-tier">👤 Solo</div>
+          <div class="price-note">One-time</div>
+          <div class="price-name">Solo</div>
           <div class="price-amount">$49 <span>once</span></div>
-          <div class="price-seats">1 user · lifetime license</div>
+          <p class="muted">1 user · lifetime license</p>
           <ul class="price-features">
-            <li>Unlimited invoices & customers</li>
-            <li>Reports & charts</li>
-            <li>Custom logo & branding</li>
+            <li>Unlimited invoices &amp; customers</li>
+            <li>Reports &amp; charts</li>
+            <li>Custom logo &amp; branding</li>
             <li>Offline PWA</li>
-            <li>Backup & restore</li>
+            <li>Backup &amp; restore</li>
           </ul>
-          <a href="https://gitsystem.gumroad.com/l/GITInvoice-solo" target="_blank" rel="noopener" class="btn btn-ghost">Buy Solo →</a>
+          <a href="https://gitsystem.gumroad.com/l/GITInvoice-solo" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Buy Solo</a>
         </article>
 
         <article class="price-card featured">
-          <div class="price-badge">Most Popular</div>
-          <div class="price-tier">👥 Team</div>
+          <div class="price-note">Most popular</div>
+          <div class="price-name">Team</div>
           <div class="price-amount">$29 <span>/mo</span></div>
-          <div class="price-seats">Up to 10 users · billed monthly</div>
+          <p class="muted">Up to 10 users · billed monthly</p>
           <ul class="price-features">
             <li>Everything in Solo</li>
             <li>Multi-user (owner + cashiers)</li>
-            <li>Inventory & stock tracking</li>
-            <li>Quotes & expenses</li>
+            <li>Inventory &amp; stock tracking</li>
+            <li>Quotes &amp; expenses</li>
             <li>Product catalogue picker</li>
           </ul>
-          <a href="https://gitsystem.gumroad.com/l/GITInvoice-team" target="_blank" rel="noopener" class="btn btn-primary">Subscribe Team →</a>
+          <a href="https://gitsystem.gumroad.com/l/GITInvoice-team" target="_blank" rel="noopener" class="btn btn-primary btn-block">Subscribe Team</a>
         </article>
 
         <article class="price-card">
-          <div class="price-tier">🏢 Business</div>
+          <div class="price-note">Monthly</div>
+          <div class="price-name">Business</div>
           <div class="price-amount">$59 <span>/mo</span></div>
-          <div class="price-seats">Up to 25 users · billed monthly</div>
+          <p class="muted">Up to 25 users · billed monthly</p>
           <ul class="price-features">
             <li>Everything in Team</li>
-            <li>API access (license key)</li>
+            <li>API access</li>
             <li>Multi-branch support</li>
             <li>Full stock history</li>
             <li>Priority feature tier</li>
           </ul>
-          <a href="https://gitsystem.gumroad.com/l/GITInvoice-business" target="_blank" rel="noopener" class="btn btn-ghost">Subscribe Business →</a>
+          <a href="https://gitsystem.gumroad.com/l/GITInvoice-business" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Subscribe Business</a>
         </article>
       </div>
     </div>
   </section>
 
   <section id="privacy">
-    <div class="container">
-      <div class="privacy-band">
-        <div>
-          <div class="section-label">Privacy first</div>
-          <h2 class="section-title">Your business data never leaves your device</h2>
-          <p class="section-sub" style="margin-top: 12px;">
-            GITInvoice is local-first. Invoices, customers, products, and settings are stored in your browser.
-            Only license activation and buyer verification are sent securely to our servers.
-          </p>
-        </div>
-        <ul class="privacy-list">
-          <li>
-            <span class="icon">🔒</span>
-            <span>Invoices & customers stored locally — not in our database</span>
-          </li>
-          <li>
-            <span class="icon">📡</span>
-            <span>Full functionality offline after first load</span>
-          </li>
-          <li>
-            <span class="icon">💾</span>
-            <span>Export and import your data anytime as JSON backup</span>
-          </li>
-          <li>
-            <span class="icon">🛡️</span>
-            <span>PBKDF2 password hashing for multi-user accounts</span>
-          </li>
-        </ul>
+    <div class="container privacy-panel">
+      <div>
+        <div class="section-kicker">Privacy</div>
+        <h2 class="section-title">Your business data stays on your device</h2>
+        <p class="section-sub" style="margin-top:12px">
+          GITInvoice is local-first. Invoices, customers, products, and settings live in your browser.
+          Only license activation and buyer verification are sent to our servers.
+        </p>
       </div>
+      <ul class="privacy-points">
+        <li>Invoices and customers are stored locally — not in our database</li>
+        <li>Works offline after the first load</li>
+        <li>Export and import your data anytime as a JSON backup</li>
+        <li>PBKDF2 password hashing for multi-user accounts</li>
+      </ul>
     </div>
   </section>
 
-  <section class="cta-section">
+  <section class="cta">
     <div class="container">
-      <div class="cta-box">
-        <h2>Ready to invoice smarter?</h2>
-        <p>Start your free trial now — no credit card, no signup required.</p>
-        <a href="/app" class="btn btn-primary">Launch GITInvoice →</a>
+      <div class="cta-inner">
+        <h2>Start invoicing today</h2>
+        <p>Free trial — no credit card, no signup required.</p>
+        <a href="/app" class="btn btn-primary">Launch GITInvoice</a>
       </div>
     </div>
   </section>
 
   <footer class="footer">
     <div class="container footer-inner">
-      <div class="logo">
+      <a href="/" class="logo">
         <img src="/icons/icon-192-maskable.png" alt="" width="28" height="28">
         GIT<span>Invoice</span>
-      </div>
+      </a>
       <ul class="footer-links">
         <li><a href="https://gitsystemng.com" target="_blank" rel="noopener">GIT System NG</a></li>
         <li><a href="/app">App</a></li>
@@ -280,7 +253,7 @@
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#privacy">Privacy</a></li>
       </ul>
-      <span>© 2026 <a href="https://gitsystemng.com" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">GIT System NG</a>. All rights reserved.</span>
+      <span>© 2026 <a href="https://gitsystemng.com" target="_blank" rel="noopener">GIT System NG</a></span>
     </div>
   </footer>
 
@@ -290,14 +263,14 @@
     const links = document.getElementById('nav-links');
 
     window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 20);
+      nav.classList.toggle('scrolled', window.scrollY > 16);
     });
 
     toggle.addEventListener('click', () => {
       links.classList.toggle('open');
     });
 
-    links.querySelectorAll('a').forEach(a => {
+    links.querySelectorAll('a').forEach((a) => {
       a.addEventListener('click', () => links.classList.remove('open'));
     });
   </script>
