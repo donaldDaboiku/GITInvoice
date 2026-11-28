@@ -1,5 +1,5 @@
 // GITInvoice Service Worker - PWA Offline Support
-const CACHE_NAME = 'GIT Invoice-v4.5.5';
+const CACHE_NAME = 'GIT Invoice-v4.5.6';
 const ASSETS = [
   '/',
   '/index.html',

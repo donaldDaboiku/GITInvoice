@@ -3,91 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GITInvoice — Professional invoicing that works offline. Your data stays on your device.">
-  <meta name="theme-color" content="#ff6b35">
-  <title>GITInvoice — Professional Invoicing, Offline & Private</title>
+  <title>GIT Invoice – Professional Offline Invoice Management Software</title>
+  <meta name="description" content="Create professional invoices, manage customers, track payments and generate business reports with GIT Invoice. Simple, private and designed to work offline.">
+  <meta name="theme-color" content="#FF6535">
+  <meta property="og:title" content="GIT Invoice – Professional Offline Invoice Management Software">
+  <meta property="og:description" content="Create professional invoices, manage customers, track payments and generate business reports with GIT Invoice. Simple, private and designed to work offline.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/icons/icon-512-maskable.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/icons/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/landing/styles.css">
 </head>
 <body>
 
   <nav class="nav" id="nav">
-    <div class="container nav-inner">
-      <a href="/" class="logo">
-        <img src="/icons/icon-192-maskable.png" alt="">
-        GIT<span>Invoice</span>
+    <div class="nav-inner">
+      <a href="/" class="logo" aria-label="GIT Invoice home">
+        <img src="/icons/icon-192-maskable.png" width="36" height="36" alt="">
+        GIT <span>Invoice</span>
       </a>
       <ul class="nav-links" id="nav-links">
-        <li><a href="https://gitsystemng.com" target="_blank" rel="noopener">GIT System NG</a></li>
+        <li><a href="https://gitsystemng.com" target="_blank" rel="noopener">GITSYSTEMNG</a></li>
         <li><a href="#features">Features</a></li>
-        <li><a href="#how">How it works</a></li>
+        <li><a href="#how">How It Works</a></li>
         <li><a href="#pricing">Pricing</a></li>
         <li><a href="#privacy">Privacy</a></li>
+        <li><a href="/app" class="btn btn-primary mobile-cta">Open App</a></li>
       </ul>
-      <a href="/app" class="btn btn-primary">Open app</a>
-      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu">☰</button>
+      <div class="nav-actions">
+        <a href="/app" class="btn btn-primary">Open App</a>
+        <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
     </div>
   </nav>
 
   <header class="hero">
-    <div class="container hero-main">
-      <div class="hero-brand">GIT<span>Invoice</span></div>
-      <h1 class="hero-headline">Invoicing that stays on your device</h1>
-      <p class="hero-lead">Create invoices, manage customers, and run reports offline — without sending business data to the cloud.</p>
-      <div class="hero-cta">
-        <a href="/app" class="btn btn-primary">Try free — 3 invoices</a>
-        <a href="#pricing" class="btn btn-ghost">See plans</a>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <h1 class="h-hero">Professional Invoicing. <span class="text-highlight">Completely Offline.</span></h1>
+        <p class="text-body">Create invoices, manage customers, track payments and generate business reports — all from your device. Your business data stays private.</p>
+        <div class="hero-cta">
+          <a href="/app" class="btn btn-primary">Try Free – 3 Invoices</a>
+          <a href="#pricing" class="btn btn-secondary">Explore Plans</a>
+        </div>
+        <div class="trust-row">
+          <div class="trust-item"><i data-lucide="wifi-off"></i> Works Offline</div>
+          <div class="trust-item"><i data-lucide="shield-check"></i> Your Data Stays Private</div>
+          <div class="trust-item"><i data-lucide="hard-drive"></i> No Cloud Dependency</div>
+        </div>
       </div>
-    </div>
 
-    <div class="hero-stage" aria-hidden="true">
-      <div class="hero-stage-plane">
-        <div class="invoice-sheet">
-          <div class="invoice-top">
-            <div>
-              <h3>SwiftMart Superstore</h3>
-              <p>Invoice for Blessing Catering Co.</p>
-            </div>
-            <div class="invoice-meta">
-              <strong>INV-2026-0047</strong>
-              Due 12 Apr 2026<br>
-              Status: Paid
-            </div>
+      <div class="hero-visual">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="app-frame" role="img" aria-label="GIT Invoice application preview showing a professional invoice">
+          <div class="app-frame-bar">
+            <span class="app-frame-dot"></span>
+            <span class="app-frame-dot"></span>
+            <span class="app-frame-dot"></span>
+            <span class="app-frame-title">GIT Invoice — Invoice Preview</span>
           </div>
-          <table class="invoice-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Frozen chicken (1kg packs)</td>
-                <td>50</td>
-                <td>₦225,000</td>
-              </tr>
-              <tr>
-                <td>Tomato paste (crates)</td>
-                <td>5</td>
-                <td>₦90,000</td>
-              </tr>
-              <tr>
-                <td>Delivery</td>
-                <td>1</td>
-                <td>₦15,000</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="invoice-total">
-            <div>
-              <div class="label">Total</div>
-              <div class="value">₦346,500</div>
+          <div class="preview-invoice">
+            <div class="preview-invoice-head">
+              <div>
+                <h3>SwiftMart Superstore</h3>
+                <p>Bill to: Blessing Catering Co.</p>
+              </div>
+              <span class="preview-badge">Paid</span>
+            </div>
+            <div class="preview-meta">
+              <div><strong>INV-2026-0047</strong> Invoice number</div>
+              <div><strong>12 Apr 2026</strong> Due date</div>
+            </div>
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Frozen chicken (1kg packs)</td>
+                  <td>50</td>
+                  <td>₦4,500</td>
+                  <td>₦225,000</td>
+                </tr>
+                <tr>
+                  <td>Tomato paste (crates)</td>
+                  <td>5</td>
+                  <td>₦18,000</td>
+                  <td>₦90,000</td>
+                </tr>
+                <tr>
+                  <td>Delivery</td>
+                  <td>1</td>
+                  <td>₦15,000</td>
+                  <td>₦15,000</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="preview-total">
+              <span>Subtotal ₦330,000 · Tax ₦16,500</span>
+              <strong>₦346,500</strong>
             </div>
           </div>
         </div>
@@ -95,95 +120,207 @@
     </div>
   </header>
 
-  <section id="features" class="features">
-    <div class="container">
-      <div class="section-head">
-        <div class="section-kicker">Features</div>
-        <h2 class="section-title">Built to get you paid</h2>
-        <p class="section-sub">From freelancers to growing teams — invoices, customers, stock, and reports in one installable app.</p>
-      </div>
-      <div class="feature-list">
-        <article class="feature-row">
-          <h3>Professional invoices</h3>
-          <p>Create, preview, and print branded invoices with tax, custom numbering, and your logo.</p>
-        </article>
-        <article class="feature-row">
-          <h3>Customers</h3>
-          <p>Save contacts, autocomplete on new invoices, and keep notes for every relationship.</p>
-        </article>
-        <article class="feature-row">
-          <h3>Reports</h3>
-          <p>Revenue trends, status breakdowns, and profit &amp; loss — export when you need it.</p>
-        </article>
-        <article class="feature-row">
-          <h3>Inventory &amp; quotes</h3>
-          <p>Stock tracking, low-stock alerts, quotes, and expenses on Team and Business plans.</p>
-        </article>
-        <article class="feature-row">
-          <h3>Multi-user access</h3>
-          <p>Owner and cashier roles. Cashiers only see their own invoices. Up to 25 users on Business.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="how">
-    <div class="container">
-      <div class="section-head">
-        <div class="section-kicker">How it works</div>
-        <h2 class="section-title">Ready in minutes</h2>
-        <p class="section-sub">No account signup. No cloud sync. Open the app and start invoicing.</p>
-      </div>
-      <div class="how-steps">
-        <div class="how-step">
-          <h3>Open the app</h3>
-          <p>Use it in the browser or install as a PWA on desktop or phone.</p>
-        </div>
-        <div class="how-step">
-          <h3>Try for free</h3>
-          <p>Create up to 3 invoices and 2 customers before buying a license.</p>
-        </div>
-        <div class="how-step">
-          <h3>Buy &amp; activate</h3>
-          <p>Purchase on Gumroad, paste your license key, and unlock your plan.</p>
-        </div>
-        <div class="how-step">
-          <h3>Work offline</h3>
-          <p>Invoices and customers stay on this device — even without internet.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="pricing" class="pricing">
+  <section id="features" class="features section-pad">
     <div class="container">
       <div class="section-head center">
-        <div class="section-kicker">Pricing</div>
-        <h2 class="section-title">Simple plans that scale</h2>
-        <p class="section-sub">Solo is a one-time license. Team and Business are monthly — cancel anytime.</p>
+        <h2 class="h-section">Everything You Need to Manage Your Invoicing.</h2>
+        <p class="text-body">Practical tools for freelancers, shops and growing teams — built around privacy and offline work.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="file-text"></i></div>
+          <h3 class="h-feature">Professional Invoicing</h3>
+          <p>Create professional invoices with your business details and branding.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="users"></i></div>
+          <h3 class="h-feature">Customer Management</h3>
+          <p>Maintain customer information and access customer records quickly.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="circle-dollar-sign"></i></div>
+          <h3 class="h-feature">Payment Tracking</h3>
+          <p>Track paid, unpaid and outstanding invoices in one place.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="bar-chart-3"></i></div>
+          <h3 class="h-feature">Business Reports</h3>
+          <p>Review invoicing and business performance with clear charts.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="wifi-off"></i></div>
+          <h3 class="h-feature">Offline Functionality</h3>
+          <p>Work without requiring an active internet connection.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="lock"></i></div>
+          <h3 class="h-feature">Data Privacy</h3>
+          <p>Keep business information stored locally on your device.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="palette"></i></div>
+          <h3 class="h-feature">Invoice Customization</h3>
+          <p>Generate invoices with your logo, tax settings and formatting.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon"><i data-lucide="folders"></i></div>
+          <h3 class="h-feature">Easy Invoice Management</h3>
+          <p>Create, view and manage invoice records efficiently.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" class="section-pad">
+    <div class="container">
+      <div class="section-head center">
+        <h2 class="h-section">How It Works</h2>
+        <p class="text-body">Three simple steps from setup to managing paid invoices.</p>
+      </div>
+      <div class="how-grid">
+        <article class="how-card">
+          <div class="how-icon"><i data-lucide="building-2"></i></div>
+          <div class="how-num">01</div>
+          <h3 class="h-feature">Set Up Your Business</h3>
+          <p>Enter your business information and configure your invoice details.</p>
+        </article>
+        <article class="how-card">
+          <div class="how-icon"><i data-lucide="pen-line"></i></div>
+          <div class="how-num">02</div>
+          <h3 class="h-feature">Create Your Invoice</h3>
+          <p>Add customers, products or services, quantities and prices.</p>
+        </article>
+        <article class="how-card">
+          <div class="how-icon"><i data-lucide="clipboard-check"></i></div>
+          <div class="how-num">03</div>
+          <h3 class="h-feature">Manage Your Invoices</h3>
+          <p>Save, access and manage your invoices and payment records.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="showcase" class="showcase section-pad">
+    <div class="container">
+      <div class="section-head center">
+        <h2 class="h-section">Simple Tools. Professional Results.</h2>
+        <p class="text-body">Realistic views of the GIT Invoice interface — dashboard, invoicing, customers and reports.</p>
+      </div>
+      <div class="showcase-grid">
+        <article class="showcase-item wide">
+          <div class="showcase-label">Dashboard overview</div>
+          <div class="mock-ui">
+            <div class="mock-dash">
+              <div class="mock-stat"><small>Revenue</small><strong>₦842K</strong></div>
+              <div class="mock-stat"><small>Invoices</small><strong>47</strong></div>
+              <div class="mock-stat"><small>Paid</small><strong>89%</strong></div>
+            </div>
+            <div class="mock-list">
+              <div class="mock-row"><span>INV-0047 · Blessing Catering</span><span>Paid</span></div>
+              <div class="mock-row"><span>INV-0046 · Emeka Supplies</span><span>Pending</span></div>
+              <div class="mock-row"><span>INV-0045 · Lagos Events Ltd</span><span>Overdue</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="showcase-item">
+          <div class="showcase-label">Invoice creation</div>
+          <div class="mock-ui">
+            <div class="mock-form">
+              <div class="mock-field"><label>Customer</label><span>Blessing Catering Co.</span></div>
+              <div class="mock-field"><label>Item</label><span>Frozen chicken (1kg)</span></div>
+              <div class="mock-field"><label>Quantity × Price</label><span>50 × ₦4,500</span></div>
+              <div class="mock-field"><label>Total</label><span>₦225,000</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="showcase-item">
+          <div class="showcase-label">Customer management</div>
+          <div class="mock-ui">
+            <div class="mock-list">
+              <div class="mock-row"><span>Blessing Catering Co.</span><span>Active</span></div>
+              <div class="mock-row"><span>Emeka Okafor Supplies</span><span>Active</span></div>
+              <div class="mock-row"><span>Lagos Events Ltd</span><span>Active</span></div>
+              <div class="mock-row"><span>Adaeze Williams</span><span>Active</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="showcase-item wide">
+          <div class="showcase-label">Reports</div>
+          <div class="mock-ui">
+            <div class="mock-sidebar">
+              <div class="mock-side" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+              <div class="mock-main">
+                <div class="mock-chart" role="img" aria-label="Revenue trend chart illustration"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy" class="section-pad">
+    <div class="container">
+      <div class="privacy-panel">
+        <div>
+          <h2 class="h-section">Your Business. Your Data. Your Device.</h2>
+          <p class="text-body">GIT Invoice is designed to help you manage your invoicing without depending on cloud connectivity. Work with your business information directly on your device, even when internet access is unavailable.</p>
+        </div>
+        <ul class="privacy-benefits">
+          <li>
+            <div class="icon"><i data-lucide="wifi-off"></i></div>
+            <div>
+              <strong>Offline-first operation</strong>
+              <p>Create and manage invoices after the first load — even without internet.</p>
+            </div>
+          </li>
+          <li>
+            <div class="icon"><i data-lucide="database"></i></div>
+            <div>
+              <strong>Local business data storage</strong>
+              <p>Invoices, customers and settings stay in your browser on this device.</p>
+            </div>
+          </li>
+          <li>
+            <div class="icon"><i data-lucide="key-round"></i></div>
+            <div>
+              <strong>Greater control over business information</strong>
+              <p>Export and import JSON backups anytime. Only license and KYC verification are sent to our servers.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing section-pad">
+    <div class="container">
+      <div class="section-head center">
+        <h2 class="h-section">Simple Pricing That Scales With You</h2>
+        <p class="text-body">Solo is a one-time license. Team and Business are monthly subscriptions — cancel anytime.</p>
       </div>
       <div class="pricing-grid">
         <article class="price-card">
-          <div class="price-note">One-time</div>
+          <div class="price-tag">One-time</div>
           <div class="price-name">Solo</div>
           <div class="price-amount">$49 <span>once</span></div>
           <p class="muted">1 user · lifetime license</p>
-          <ul class="price-features">
+          <ul class="price-list">
             <li>Unlimited invoices &amp; customers</li>
             <li>Reports &amp; charts</li>
             <li>Custom logo &amp; branding</li>
             <li>Offline PWA</li>
             <li>Backup &amp; restore</li>
           </ul>
-          <a href="https://gitsystem.gumroad.com/l/GITInvoice-solo" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Buy Solo</a>
+          <a href="https://gitsystem.gumroad.com/l/GITInvoice-solo" target="_blank" rel="noopener" class="btn btn-secondary btn-block">Buy Solo</a>
         </article>
 
         <article class="price-card featured">
-          <div class="price-note">Most popular</div>
+          <div class="price-tag">Most popular</div>
           <div class="price-name">Team</div>
           <div class="price-amount">$29 <span>/mo</span></div>
           <p class="muted">Up to 10 users · billed monthly</p>
-          <ul class="price-features">
+          <ul class="price-list">
             <li>Everything in Solo</li>
             <li>Multi-user (owner + cashiers)</li>
             <li>Inventory &amp; stock tracking</li>
@@ -194,84 +331,97 @@
         </article>
 
         <article class="price-card">
-          <div class="price-note">Monthly</div>
+          <div class="price-tag">Monthly</div>
           <div class="price-name">Business</div>
           <div class="price-amount">$59 <span>/mo</span></div>
           <p class="muted">Up to 25 users · billed monthly</p>
-          <ul class="price-features">
+          <ul class="price-list">
             <li>Everything in Team</li>
             <li>API access</li>
             <li>Multi-branch support</li>
             <li>Full stock history</li>
             <li>Priority feature tier</li>
           </ul>
-          <a href="https://gitsystem.gumroad.com/l/GITInvoice-business" target="_blank" rel="noopener" class="btn btn-ghost btn-block">Subscribe Business</a>
+          <a href="https://gitsystem.gumroad.com/l/GITInvoice-business" target="_blank" rel="noopener" class="btn btn-secondary btn-block">Subscribe Business</a>
         </article>
       </div>
     </div>
   </section>
 
-  <section id="privacy">
-    <div class="container privacy-panel">
-      <div>
-        <div class="section-kicker">Privacy</div>
-        <h2 class="section-title">Your business data stays on your device</h2>
-        <p class="section-sub" style="margin-top:12px">
-          GITInvoice is local-first. Invoices, customers, products, and settings live in your browser.
-          Only license activation and buyer verification are sent to our servers.
-        </p>
-      </div>
-      <ul class="privacy-points">
-        <li>Invoices and customers are stored locally — not in our database</li>
-        <li>Works offline after the first load</li>
-        <li>Export and import your data anytime as a JSON backup</li>
-        <li>PBKDF2 password hashing for multi-user accounts</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="cta">
+  <section class="cta-band section-pad">
     <div class="container">
-      <div class="cta-inner">
-        <h2>Start invoicing today</h2>
-        <p>Free trial — no credit card, no signup required.</p>
-        <a href="/app" class="btn btn-primary">Launch GITInvoice</a>
+      <div class="cta-box">
+        <h2 class="h-section">Ready to Simplify Your Invoicing?</h2>
+        <p class="text-body">Start creating professional invoices and managing your business records with GIT Invoice. Free trial includes 3 invoices.</p>
+        <div class="cta-actions">
+          <a href="/app" class="btn btn-primary">Start Free Today</a>
+          <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+        </div>
       </div>
     </div>
   </section>
 
   <footer class="footer">
-    <div class="container footer-inner">
-      <a href="/" class="logo">
-        <img src="/icons/icon-192-maskable.png" alt="" width="28" height="28">
-        GIT<span>Invoice</span>
-      </a>
-      <ul class="footer-links">
-        <li><a href="https://gitsystemng.com" target="_blank" rel="noopener">GIT System NG</a></li>
-        <li><a href="/app">App</a></li>
-        <li><a href="https://gitsystem.gumroad.com" target="_blank" rel="noopener">Gumroad</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-        <li><a href="#privacy">Privacy</a></li>
-      </ul>
-      <span>© 2026 <a href="https://gitsystemng.com" target="_blank" rel="noopener">GIT System NG</a></span>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo">
+            <img src="/icons/icon-192-maskable.png" width="36" height="36" alt="">
+            GIT <span>Invoice</span>
+          </a>
+          <p class="footer-desc">Professional offline invoicing from GreenPasture Integrated Tech System (GITSYSTEMNG). Your business data stays on your device.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#how">How It Works</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/app">Open App</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="https://gitsystemng.com" target="_blank" rel="noopener">GITSYSTEMNG</a>
+          <a href="https://gitsystemng.com/support" target="_blank" rel="noopener">Support</a>
+          <a href="https://gitsystem.gumroad.com" target="_blank" rel="noopener">Gumroad Store</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="https://gitsystemng.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+          <a href="https://gitsystemng.com/terms" target="_blank" rel="noopener">Terms of Service</a>
+          <a href="#privacy">Offline &amp; Privacy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 GITSYSTEMNG. All rights reserved.</span>
+        <span>Contact: <a href="https://gitsystemng.com/support" target="_blank" rel="noopener">gitsystemng.com/support</a></span>
+      </div>
     </div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
   <script>
-    const nav = document.getElementById('nav');
-    const toggle = document.getElementById('nav-toggle');
-    const links = document.getElementById('nav-links');
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.lucide) window.lucide.createIcons();
 
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 16);
-    });
+      var nav = document.getElementById('nav');
+      var toggle = document.getElementById('nav-toggle');
+      var links = document.getElementById('nav-links');
 
-    toggle.addEventListener('click', () => {
-      links.classList.toggle('open');
-    });
+      window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 8);
+      }, { passive: true });
 
-    links.querySelectorAll('a').forEach((a) => {
-      a.addEventListener('click', () => links.classList.remove('open'));
+      toggle.addEventListener('click', function () {
+        var open = links.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      links.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          links.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
     });
   </script>
 </body>
